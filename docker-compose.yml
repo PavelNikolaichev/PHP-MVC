@@ -2,11 +2,12 @@ version: '3'
 
 services:
   php:
-    image: php:8.0-apache
+    build: docker/php
     volumes:
       - ./:/var/www/html
     ports:
       - '80:80'
+    working_dir: /var/www/html
   db:
     image: mysql:8.0
     ports:
@@ -16,5 +17,3 @@ services:
       MYSQL_DATABASE: test
       MYSQL_USER: test
       MYSQL_PASSWORD: test
-    volumes:
-      - ./db:/var/lib/mysql
