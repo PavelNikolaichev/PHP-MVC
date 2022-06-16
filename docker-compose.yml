@@ -4,10 +4,9 @@ services:
   php:
     build: docker/php
     volumes:
-      - ./:/var/www/html
+      - ./src:/var/www/
     ports:
       - '80:80'
-    working_dir: /var/www/html
   db:
     image: mysql:8.0
     ports:
