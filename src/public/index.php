@@ -1,20 +1,32 @@
 <?php
+
 use App\Controllers\UserController;
 use App\Controllers\UserListController;
+use App\core\Responses\HTMLResponse;
+use App\core\Responses\IResponse;
 use App\Core\Router;
+use App\Core\ServiceProvider;
 
 require_once '../vendor/autoload.php';
 
-$router = new Router();
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+$dotenv->safeLoad();
 
-$router->get('/', function () {
-    (new UserController())->actionIndex();
+$serviceProvider = new ServiceProvider();
+$pdo = $serviceProvider->make('ConnectDb');
+$router = $serviceProvider->make(Router::class);
+
+$router->get('/', function ($params) use ($serviceProvider) {
+    return $serviceProvider->make(UserController::class)->actionIndex($params);
 });
-$router->get('/user-list', function () {
-    (new UserListController())->actionIndex();
+$router->get('/user-list', function ($params) use ($serviceProvider) {
+    return $serviceProvider->make(UserListController::class)->actionIndex($params);
 });
 $router->addNotFoundRoute(function () {
-    echo '404 Not Found';
+    return (new HTMLResponse(['404 Not Found'], '<p>404 Not Found</p>'));
 });
 
-$router->run();
+/* @var IResponse $response */
+$response = $router->run();
+header(implode($response->getHeaders()));
+echo $response->getBody();

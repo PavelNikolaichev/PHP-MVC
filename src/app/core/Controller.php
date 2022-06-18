@@ -2,6 +2,8 @@
 
 namespace App\Core;
 
+use App\core\Responses\IResponse;
+
 class Controller
 {
     /**
@@ -24,8 +26,9 @@ class Controller
      * Method to pass the data to the view.
      * @return void
      */
-    public function actionIndex(): void
+    public function actionIndex(): IResponse
     {
-        $this->view->render('index');
+//        $this->view->render('index');
+//        return new IResponse(['200 OK'], ['index']);
     }
 }

@@ -10,8 +10,14 @@ class View
      * @param array $data - data to be passed to the view.
      * @return void
      */
-    final public function render(string $name, array $data = []): void
+    final public function render(string $name, array $data = []): string
     {
+        ob_start();
+
+        require_once '../app/views/components/header.php';
         require_once '../app/views/' . $name . '.php';
+        require_once '../app/views/components/footer.php';
+
+        return ob_get_clean();
     }
 }

@@ -1,3 +1,6 @@
+<?php
+/* @var array $data */
+?>
 <h1>User List</h1>
 
 <?php if ($data): ?>

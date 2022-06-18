@@ -3,6 +3,8 @@
 namespace app\Controllers;
 
 use App\Core\Controller;
+use App\core\Responses\HTMLResponse;
+use App\core\Responses\IResponse;
 use App\Core\View;
 use App\Models\UserModel;
 
@@ -19,11 +21,15 @@ class UserListController extends Controller
 
     /**
      * Method to pass the data to the view.
-     * @return void
+     * @param array $params
+     * @return IResponse
      */
-    final public function actionIndex(): void
+    final public function actionIndex(array $params = []): IResponse
     {
         $data = $this->model->fetchAll();
-        $this->view->render('userList', $data);
+
+        $body = $this->view->render('userList', $data);
+
+        return new HTMLResponse(['200 OK'], $body);
     }
 }
