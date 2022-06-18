@@ -11,7 +11,7 @@ class UserController extends Controller
     /**
      * Constructor for UserController.
      */
-    public function __construct()
+    public function __construct(UserModel $userModel = null, View $view = null)
     {
         $this->model = new UserModel();
         $this->view = new View();

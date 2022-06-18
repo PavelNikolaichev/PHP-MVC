@@ -33,7 +33,10 @@ class Router
         ];
     }
 
-    public function run()
+    /**
+     * @return IResponse
+     */
+    public function run(): IResponse
     {
         $requestUri = parse_url($_SERVER['REQUEST_URI']);
         $requestPath = $requestUri['path'];
