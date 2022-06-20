@@ -1,7 +1,7 @@
 <?php
 
-use App\Controllers\UserController;
-use App\Controllers\UserListController;
+use App\controllers\UserController;
+use App\controllers\UserListController;
 use App\core\Responses\HTMLResponse;
 use App\core\Responses\IResponse;
 use App\Core\Router;
@@ -17,6 +17,10 @@ $pdo = $serviceProvider->make('ConnectDb');
 $router = $serviceProvider->make(Router::class);
 
 $router->get('/', function ($params) use ($serviceProvider) {
+    return $serviceProvider->make(UserController::class)->actionIndex($params);
+});
+
+$router->get('/user', function ($params) use ($serviceProvider) {
     return $serviceProvider->make(UserController::class)->actionIndex($params);
 });
 $router->get('/user-list', function ($params) use ($serviceProvider) {

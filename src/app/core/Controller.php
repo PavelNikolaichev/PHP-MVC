@@ -2,6 +2,7 @@
 
 namespace App\Core;
 
+use App\Core\Database\UserRepository;
 use App\core\Responses\IResponse;
 
 class Controller
@@ -10,13 +11,13 @@ class Controller
      * @var Model - Model object.
      * @var View - View object.
      */
-    public Model $model;
+    public UserRepository $model;
     public View $view;
 
     /**
      * Constructor for Controller.
      */
-    public function __construct(Model $model, View $view)
+    public function __construct(UserRepository $model, View $view)
     {
         $this->model = $model;
         $this->view = $view;
@@ -24,7 +25,7 @@ class Controller
 
     /**
      * Method to pass the data to the view.
-     * @return void
+     * @return IResponse
      */
     public function actionIndex(): IResponse
     {

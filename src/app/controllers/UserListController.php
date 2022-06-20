@@ -1,24 +1,13 @@
 <?php
 
-namespace app\Controllers;
+namespace App\Controllers;
 
 use App\Core\Controller;
 use App\core\Responses\HTMLResponse;
 use App\core\Responses\IResponse;
-use App\Core\View;
-use App\Models\UserModel;
 
 class UserListController extends Controller
 {
-    /**
-     * Constructor for UserListController.
-     */
-    final public function __construct()
-    {
-        $this->model = new UserModel();
-        $this->view = new View();
-    }
-
     /**
      * Method to pass the data to the view.
      * @param array $params

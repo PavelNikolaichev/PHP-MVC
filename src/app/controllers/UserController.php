@@ -1,25 +1,13 @@
 <?php
 
-namespace app\Controllers;
+namespace App\Controllers;
 
 use App\Core\Controller;
 use App\core\Responses\HTMLResponse;
 use App\core\Responses\IResponse;
-use App\Core\View;
-use App\Models\UserModel;
 
 class UserController extends Controller
 {
-    /**
-     * Constructor for UserController.
-     */
-    public function __construct(UserModel $userModel = null, View $view = null)
-    {
-//        parent::__construct();
-        $this->model = $userModel ?? new UserModel();
-        $this->view = $view ?? new View();
-    }
-
     /**
      * Method to pass the data to the view.
      * @param array $params
@@ -27,8 +15,8 @@ class UserController extends Controller
      */
     final public function actionIndex(array $params = []): IResponse
     {
-        $data = $this->model->fetch();
-//        $this->view->render('user', $data);
+        $data = $this->model->fetch($params['id']);
+
 //        Get response body from view
         $body = $this->view->render('user', $data);
 

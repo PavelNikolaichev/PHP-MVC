@@ -2,10 +2,11 @@
 
 namespace App\Core;
 
-use app\Controllers\UserController;
-use app\Controllers\UserListController;
-use App\core\Database\Database;
-use app\Models\UserModel;
+use App\controllers\UserController;
+use App\controllers\UserListController;
+use App\Core\Database\Database;
+use App\Core\Database\UserRepository;
+use App\Models\UserModel;
 
 class ServiceProvider
 {
@@ -32,8 +33,23 @@ class ServiceProvider
             },
             UserListController::class => function(string $class, ServiceProvider $serviceProvider) {
                 return new $class(
-                    $serviceProvider->make(UserModel::class),
+                    $serviceProvider->make(UserRepository::class),
                     $serviceProvider->make(View::class)
+                );
+            },
+            UserModel::class => function(string $class, ServiceProvider $serviceProvider) {
+                return new $class(
+                    $serviceProvider->make(QueryBuilder::class)
+                );
+            },
+            UserRepository::class => function(string $class, ServiceProvider $serviceProvider) {
+                return new $class(
+                    $serviceProvider->make(QueryBuilder::class)
+                );
+            },
+            QueryBuilder::class => function(string $class, ServiceProvider $serviceProvider) {
+                return new $class(
+                    $serviceProvider->make('ConnectDb')->getPDO()
                 );
             },
             'ConnectDb' => function() {
@@ -66,7 +82,7 @@ class ServiceProvider
         }
 
         return isset($this->map[$class])
-            ? call_user_func($this->map[$class])
+            ? call_user_func($this->map[$class], $class, $this)
             : new $class;
     }
 

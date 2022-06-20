@@ -11,5 +11,4 @@ $dotenv->safeLoad();
 $serviceProvider = new ServiceProvider();
 $pdo = $serviceProvider->make('ConnectDb')->getPDO();
 $migrationsHandler = new MigrationsHandler($pdo);
-
 $migrationsHandler->applyMigrations();

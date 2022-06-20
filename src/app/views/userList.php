@@ -13,6 +13,8 @@
                 <th scope="col">Email</th>
                 <th scope="col">Gender</th>
                 <th scope="col">Status</th>
+                <th scope="col">Link</th>
+            </tr>
         </thead>
         <tbody>
             <?php foreach($data as $user): ?>
@@ -22,6 +24,7 @@
                     <th><?= $user['email'] ?></th>
                     <th><?= $user['gender'] ?></th>
                     <th><?= $user['status'] ?></th>
+                    <th><a href="/user?id=<?= $user['id'] ?>" class="btn btn-primary">Change</a></th>
                 </tr>
             <?php endforeach ?>
         </tbody>
