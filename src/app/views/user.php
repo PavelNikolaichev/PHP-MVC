@@ -3,8 +3,7 @@
 ?>
 
 <h1>User</h1>
-<?php if ($data): ?>
-    <!-- TODO: User edit form -->
+<?php if ($data['user']): ?>
     <table class="table table-striped table-hover">
         <thead class="thead-dark">
         <tr>
@@ -16,58 +15,59 @@
         </thead>
         <tbody>
         <tr>
-            <th scope="row"><?= $data['id'] ?></th>
-            <th><?= $data['name'] ?></th>
-            <th><?= $data['email'] ?></th>
-            <th><?= $data['gender'] ?></th>
-            <th><?= $data['status'] ?></th>
+            <th scope="row"><?= $data['user']->id ?></th>
+            <th><?= $data['user']->name ?></th>
+            <th><?= $data['user']->email ?></th>
+            <th><?= $data['user']->gender ?></th>
+            <th><?= $data['user']->status ?></th>
         </tr>
         </tbody>
     </table>
-    <form>
+    <form action="/user?id=<?= $data['user']->id ?>" method="post">
         <div class="form-group row">
-            <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
+            <label for="inputEmail" class="col-sm-1 col-form-label">Email</label>
             <div class="col-sm-10">
-                <input type="email" class="form-control" id="inputEmail" placeholder="<?= $data['email'] ?>">
+                <input type="email" class="form-control <?= isset($data['errors']['email']) ? 'is-invalid' : '' ?>" id="inputEmail" name="email" value="<?= htmlspecialchars($data['user']->email) ?>">
+                <div class="invalid-feedback">
+                    <?= $data['errors']['email'] ?? '' ?>
+                </div>
             </div>
         </div>
         <div class="form-group row">
-            <label for="inputName" class="col-sm-2 col-form-label">Name</label>
+            <label for="inputName" class="col-sm-1 col-form-label">Name</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" id="inputName" placeholder="<?= $data['name'] ?>">
+                <input type="text" class="form-control <?= isset($data['errors']['name']) ? 'is-invalid' : '' ?>" id="inputName" name="name" value="<?= htmlspecialchars($data['user']->name) ?>">
+                <div class="invalid-feedback">
+                    <?= $data['errors']['name'] ?? '' ?>
+                </div>
+            </div>
+        </div>
+
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="inputGender">Gender</label>
+            </div>
+            <select class="custom-select <?= isset($data['errors']['gender']) ? 'is-invalid' : '' ?>" id="inputGender" name="gender">
+                <option value="Male" <?= $data['user']->gender === 'Male' ? 'selected' : '' ?> >Male</option>
+                <option value="Female" <?= $data['user']->gender === 'Female' ? 'selected' : '' ?> >Female</option>
+            </select>
+            <div class="invalid-feedback">
+                <?= $data['errors']['gender'] ?? '' ?>
             </div>
         </div>
         <div class="input-group mb-3">
             <div class="input-group-prepend">
-                <label class="input-group-text" for="inputGroupSelect01">Options</label>
+                <label class="input-group-text" for="inputStatus">Status</label>
             </div>
-            <select class="custom-select" id="inputGroupSelect01">
-                <option selected>Choose...</option>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
+            <select class="custom-select <?= isset($data['errors']['status']) ? 'is-invalid' : '' ?>" id="inputStatus" name="status">
+                <option value="Active" <?= $data['user']->gender === 'Active' ? 'selected' : '' ?> >Active</option>
+                <option value="Inactive" <?= $data['user']->gender === 'Inactive' ? 'selected' : '' ?> >Inactive</option>
             </select>
-        </div>
-        <div class="btn-group">
-            <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="genderDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Gender
-                </button>
-                <div class="dropdown-menu" aria-labelledby="genderDropdown">
-                    <a class="dropdown-item active" href="#">Male</a>
-                    <a class="dropdown-item" href="#">Female</a>
-                </div>
-            </div>
-            <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="statusDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Status
-                </button>
-                <div class="dropdown-menu" aria-labelledby="statusDropdown">
-                    <a class="dropdown-item" href="#">Active</a>
-                    <a class="dropdown-item active" href="#">Inactive</a>
-                </div>
+            <div class="invalid-feedback">
+                <?= $data['errors']['status'] ?? '' ?>
             </div>
         </div>
+
         <div class="form-group row">
             <div class="col-sm-10">
                 <button type="submit" class="btn btn-primary">Sign in</button>

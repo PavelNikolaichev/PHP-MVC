@@ -27,7 +27,7 @@ class ServiceProvider
         $this->map = [
             UserController::class => function(string $class, ServiceProvider $serviceProvider) {
                 return new $class(
-                    $serviceProvider->make(UserModel::class),
+                    $serviceProvider->make(UserRepository::class),
                     $serviceProvider->make(View::class)
                 );
             },

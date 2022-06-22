@@ -148,6 +148,38 @@ class QueryBuilder
         return $value;
     }
 
+    public function insert(array $values) : array {
+        unset($values['id']);
+        $keys = array_keys($values);
+
+        $keys = implode(', ', $keys);
+
+        $this->setSql("INSERT INTO $this->table ($keys) VALUES (:name, :email, :gender, :status)");
+        $this->query($this->sql, $values);
+
+        return $this->fetch($this->table)->select(['*'])->where('id', '=', $this->db->lastInsertId())->get()[0];
+    }
+
+    public function update(array $values) : array {
+        $keys = ['id' => $values['id']];
+        $sql = [];
+
+        foreach ($values as $key => $value) {
+            if ($key === 'id' || $value === '') {
+                continue;
+            }
+
+            $sql[] = "$key = :$key";
+            $keys[$key] = $value;
+        }
+
+        $sql = implode(', ', $sql);
+        $this->setSql("UPDATE $this->table SET $sql WHERE id=:id");
+        $this->query($this->sql, $keys);
+
+        return $this->fetch($this->table)->select(['*'])->where('id', '=', $values['id'])->get()[0];
+    }
+
     private function isEmpty($value) : bool {
         return empty($value);
     }
@@ -228,6 +260,7 @@ class QueryBuilder
         }
 
         $stmt->execute();
+        $this->sql = '';
         return $stmt;
     }
 }

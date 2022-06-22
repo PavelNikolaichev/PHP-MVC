@@ -2,10 +2,11 @@
 
 namespace App\Core\Database;
 
+use App\Core\Model;
 use App\Core\QueryBuilder;
 use App\Models\UserModel;
 
-class UserRepository
+class UserRepository implements  IRepository
 {
     private $queryBuilder;
 
@@ -16,13 +17,22 @@ class UserRepository
 
     /**
      * Method to get all users from the database.
-     * @return UserModel - an array of users.
+     * @return array - an array of users.
      */
-    final public function fetchAll(): UserModel
+    final public function fetchAll(): array
     {
-        $data = $this->queryBuilder->fetch('users')->select(['email', 'name', 'gender', 'status', 'id'])->get()[0];
+        $records = $this->queryBuilder
+            ->fetch('users')
+            ->select(['*'])
+            ->get();
 
-        return new UserModel(...$data);
+        $users = [];
+
+        foreach ($records as $record) {
+            $users[] = new UserModel(...$record);
+        }
+
+        return $users;
     }
 
     /**
@@ -36,31 +46,28 @@ class UserRepository
             ->fetch('users')
             ->select(['id', 'email', 'name', 'gender', 'status'])
             ->where('id', '=', $id)
-            ->get();
+            ->get()[0];
 
         if (empty($data)) {
             return null;
         }
 
-        return new UserModel(...$data[0]);
+        return new UserModel(...$data);
     }
 
-    /**
-     * @inheritDoc
-     */
-    final public function insert(array $data): bool
+    final public function save(Model $model): Model
     {
-        // TODO: Implement insert() method.
-        throw new \Exception('Not implemented yet');
-    }
+        if (null === $model->id) {
+            return new UserModel(...($this->queryBuilder
+                ->fetch('users')
+                ->insert(get_object_vars($model))));
+        }
 
-    /**
-     * @inheritDoc
-     */
-    final public function update(int $id, array $data): bool
-    {
-        // TODO: Implement update() method.'
-        throw new \Exception('Not implemented yet');
+        $data = $this->queryBuilder
+            ->fetch('users')
+            ->update(get_object_vars($model));
+
+        return new UserModel(...$data);
     }
 
     /**

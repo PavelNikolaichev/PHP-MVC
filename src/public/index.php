@@ -23,9 +23,17 @@ $router->get('/', function ($params) use ($serviceProvider) {
 $router->get('/user', function ($params) use ($serviceProvider) {
     return $serviceProvider->make(UserController::class)->actionIndex($params);
 });
+$router->post('/user', function ($params) use ($serviceProvider) {
+    return $serviceProvider->make(UserController::class)->actionIndex($params);
+});
+
 $router->get('/user-list', function ($params) use ($serviceProvider) {
     return $serviceProvider->make(UserListController::class)->actionIndex($params);
 });
+$router->post('/user-list', function ($params) use ($serviceProvider) {
+    return $serviceProvider->make(UserListController::class)->actionIndex($params);
+});
+
 $router->addNotFoundRoute(function () {
     return (new HTMLResponse(['404 Not Found'], '<p>404 Not Found</p>'));
 });

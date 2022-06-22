@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Core\Controller;
 use App\core\Responses\HTMLResponse;
 use App\core\Responses\IResponse;
+use App\Models\UserModel;
 
 class UserController extends Controller
 {
@@ -15,9 +16,19 @@ class UserController extends Controller
      */
     final public function actionIndex(array $params = []): IResponse
     {
-        $data = $this->model->fetch($params['id']);
+        $data = [];
 
-//        Get response body from view
+        if ($_POST) {
+            $model = new UserModel(...$params);
+            $data['errors'] = $model->validate();
+
+            if (empty($data['errors'])) {
+                $this->model->save($model);
+            }
+        }
+
+        $data['user'] = $this->model->fetch($params['id']);
+
         $body = $this->view->render('user', $data);
 
         return new HTMLResponse(['200 OK'], $body);

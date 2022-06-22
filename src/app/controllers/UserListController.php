@@ -5,17 +5,28 @@ namespace App\Controllers;
 use App\Core\Controller;
 use App\core\Responses\HTMLResponse;
 use App\core\Responses\IResponse;
+use App\Models\UserModel;
 
 class UserListController extends Controller
 {
     /**
      * Method to pass the data to the view.
      * @param array $params
-     * @return IResponse
+     * @return HTMLResponse
      */
     final public function actionIndex(array $params = []): IResponse
     {
-        $data = $this->model->fetchAll();
+        $data = [];
+
+        if ($_POST) {
+            $model = new UserModel(...$params);
+            $data['errors'] = $model->validate();
+
+            if (empty($data['errors'])) {
+                $this->model->save($model);
+            }
+        }
+        $data['users'] = $this->model->fetchAll();
 
         $body = $this->view->render('userList', $data);
 
