@@ -6,7 +6,7 @@ use App\Core\Model;
 use App\Core\QueryBuilder;
 use App\Models\UserModel;
 
-class UserRepository implements  IRepository
+class UserRepository implements IRepository
 {
     private $queryBuilder;
 
@@ -46,13 +46,13 @@ class UserRepository implements  IRepository
             ->fetch('users')
             ->select(['id', 'email', 'name', 'gender', 'status'])
             ->where('id', '=', $id)
-            ->get()[0];
+            ->get();
 
         if (empty($data)) {
             return null;
         }
 
-        return new UserModel(...$data);
+        return new UserModel(...$data[0]);
     }
 
     final public function save(Model $model): Model
@@ -73,9 +73,8 @@ class UserRepository implements  IRepository
     /**
      * @inheritDoc
      */
-    final public function delete(int $id): bool
+    final public function delete(int $id): void
     {
-        // TODO: Implement delete() method.
-        throw new \Exception('Not implemented yet');
+        $this->queryBuilder->fetch('users')->delete($id);
     }
 }

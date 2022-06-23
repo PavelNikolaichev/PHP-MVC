@@ -12,7 +12,7 @@ class UserListController extends Controller
     /**
      * Method to pass the data to the view.
      * @param array $params
-     * @return HTMLResponse
+     * @return IResponse
      */
     final public function actionIndex(array $params = []): IResponse
     {

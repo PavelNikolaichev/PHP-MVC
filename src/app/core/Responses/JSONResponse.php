@@ -2,22 +2,25 @@
 
 namespace App\core\Responses;
 
-class HTMLResponse implements IResponse
+use App\Core\Model;
+
+class JSONResponse implements IResponse
 {
     private array $headers;
-    private string $body;
+    private Model $body;
 
     /**
      * @param array $headers - headers of the response.
      * @param string $body - body of the response.
      */
-    public function __construct(array $headers, string $body)
+    public function __construct(array $headers, Model $body)
     {
         $this->headers = $headers;
         $this->body = $body;
     }
 
     /**
+     * Get response headers.
      * @return array - headers of the response.
      */
     final public function getHeaders(): array
@@ -26,18 +29,12 @@ class HTMLResponse implements IResponse
     }
 
     /**
+     * Get response body.
      * @return string - body of the response.
+     * @throws \JsonException
      */
     final public function getBody(): string
     {
-        return $this->body;
-    }
-
-    /**
-     * @throws \JsonException
-     */
-    final public function toJSON(): string
-    {
-        return json_encode([$this->headers, $this->body], JSON_THROW_ON_ERROR);
+        return json_encode($this->body, JSON_THROW_ON_ERROR);
     }
 }

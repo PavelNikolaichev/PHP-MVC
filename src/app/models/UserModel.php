@@ -22,10 +22,13 @@ class UserModel extends Model
         $this->id = $id;
     }
 
+    /**
+     * Validation of input data.
+     * @return array|null - array of errors.
+     */
     final public function validate(): array|null
     {
-        foreach (get_object_vars($this) as $field => $value)
-        {
+        foreach (get_object_vars($this) as $field => $value) {
             if (null === $value && $field !== 'id') {
                 trigger_error("$field is empty!");
                 return null;
@@ -40,24 +43,36 @@ class UserModel extends Model
         return $this->errors;
     }
 
+    /**
+     * Validates name field.
+     * @return void
+     */
     private function validateName(): void
     {
         if (empty($this->name)) {
             $this->addError('name', 'Name cannot be empty.');
-        } else if (!preg_match('/^[a-zA-Z\d]{6,16}$/', $this->name)) {
+        } elseif (!preg_match('/^[a-zA-Z\d]{6,16}$/', $this->name)) {
             $this->addError('name', 'Name must be 6-16 chars long and contain letters or numbers.');
         }
     }
 
+    /**
+     * Validates email field.
+     * @return void
+     */
     private function validateEmail(): void
     {
         if (empty($this->email)) {
             $this->addError('email', 'Email cannot be empty.');
-        } else if (!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
+        } elseif (!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
             $this->addError('email', 'Email must be a valid email.');
         }
     }
 
+    /**
+     * Validates gender field.
+     * @return void
+     */
     private function validateGender(): void
     {
         $genders = [
@@ -65,12 +80,15 @@ class UserModel extends Model
             'Female'
         ];
 
-        if (!in_array($this->gender, $genders))
-        {
+        if (!in_array($this->gender, $genders)) {
             $this->addError('gender', 'Gender should be either Male or Female.');
         }
     }
 
+    /**
+     * Validates status field.
+     * @return void
+     */
     private function validateStatus(): void
     {
         $statuses = [
@@ -78,12 +96,17 @@ class UserModel extends Model
             'Inactive'
         ];
 
-        if (!in_array($this->status, $statuses))
-        {
+        if (!in_array($this->status, $statuses)) {
             $this->addError('status', 'Status should be either Active or Inactive.');
         }
     }
 
+    /**
+     * Adds an error into errors array.
+     * @param string $field - field that has an error.
+     * @param string $error - error message.
+     * @return void
+     */
     private function addError(string $field, string $error): void
     {
         $this->errors[$field] = $error;

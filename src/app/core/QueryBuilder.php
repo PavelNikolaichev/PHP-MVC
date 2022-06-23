@@ -27,7 +27,8 @@ class QueryBuilder
         $this->db = $pdo;
     }
 
-    public function fetch(string $table, $sample = '') : self {
+    public function fetch(string $table, $sample = ''): self
+    {
         if (!$this->isEmpty($sample)) {
             $this->setSample($sample);
             $this->setValue($this->getValue($sample));
@@ -37,7 +38,8 @@ class QueryBuilder
         return $this;
     }
 
-    public function leftJoin(string $tableProp, array $props, array $relations) : self {
+    public function leftJoin(string $tableProp, array $props, array $relations): self
+    {
         $this->setTableProp($tableProp);
         $this->setProperties($this->getProps($props));
         $relation1 = $this->getRelation($relations);
@@ -46,27 +48,31 @@ class QueryBuilder
         return $this;
     }
 
-    public function select(array $select) : self {
+    public function select(array $select): self
+    {
         $this->setColumns($this->getColumns($select));
         return $this;
     }
 
-    public function where(string $exp1, string $cond, string $exp2) : self {
+    public function where(string $exp1, string $cond, string $exp2): self
+    {
         $this->setWhere($this->getWhere($exp1, $cond, $exp2));
         return $this;
     }
 
-    public function andWhere(string $exp1, string $cond, string $exp2) : self {
+    public function andWhere(string $exp1, string $cond, string $exp2): self
+    {
         $this->setAndWhere($this->getWhere($exp1, $cond, $exp2));
         return $this;
     }
 
-    public function orWhere(string $exp1, string $cond, string $exp2) : self {
+    public function orWhere(string $exp1, string $cond, string $exp2): self
+    {
         $this->setOrWhere($this->getWhere($exp1, $cond, $exp2));
         return $this;
     }
 
-    public function get() : array
+    public function get(): array
     {
         $this->setSql("SELECT $this->columns"."$this->properties FROM $this->table"."$this->join");
 
@@ -87,7 +93,8 @@ class QueryBuilder
         return $this->result;
     }
 
-    private function getWhere(string $exp1, string $cond, string $exp2) : string {
+    private function getWhere(string $exp1, string $cond, string $exp2): string
+    {
         try {
             $this->checkWhere($exp1, $cond, $exp2);
         } catch (\Exception $e) {
@@ -96,7 +103,8 @@ class QueryBuilder
         return ' '.$exp1.' '.$cond.' '."'$exp2'";
     }
 
-    private function checkWhere(string $column, string $cond, string $value) : void {
+    private function checkWhere(string $column, string $cond, string $value): void
+    {
         if (empty($column) || empty($cond) || empty($value)) {
             if ((!is_numeric($value)) || empty($column)) {
                 throw new \Exception('Incomplete - WHERE');
@@ -109,12 +117,14 @@ class QueryBuilder
         }
     }
 
-    private function isCondition(string $code) : bool {
+    private function isCondition(string $code): bool
+    {
         $array = ['=', '>', '<', '<=', '>='];
         return in_array($code, $array);
     }
 
-    private function getRelation(array $relations) : string {
+    private function getRelation(array $relations): string
+    {
         $relation = $relations;
         $keys = array_keys($relation);
         $values = array_values($relation);
@@ -124,11 +134,13 @@ class QueryBuilder
         return $res;
     }
 
-    private function getProps(array $props) : string {
+    private function getProps(array $props): string
+    {
         return ", $this->tableProp." . implode(", $this->tableProp.", array_values($props));
     }
 
-    private function getValue($sample) : string {
+    private function getValue($sample): string
+    {
         try {
             $value = $this->checkValue($sample);
         } catch (\Exception $e) {
@@ -137,7 +149,8 @@ class QueryBuilder
         return $value;
     }
 
-    private function checkValue($sample) : string {
+    private function checkValue($sample): string
+    {
         if (!is_string($sample) && !is_int($sample)) {
             throw new \Exception("Must be of the type string or integer, ".gettype($sample)." given");
         }
@@ -148,7 +161,8 @@ class QueryBuilder
         return $value;
     }
 
-    public function insert(array $values) : array {
+    public function insert(array $values): array
+    {
         unset($values['id']);
         $keys = array_keys($values);
 
@@ -160,7 +174,8 @@ class QueryBuilder
         return $this->fetch($this->table)->select(['*'])->where('id', '=', $this->db->lastInsertId())->get()[0];
     }
 
-    public function update(array $values) : array {
+    public function update(array $values): array
+    {
         $keys = ['id' => $values['id']];
         $sql = [];
 
@@ -180,11 +195,19 @@ class QueryBuilder
         return $this->fetch($this->table)->select(['*'])->where('id', '=', $values['id'])->get()[0];
     }
 
-    private function isEmpty($value) : bool {
+    public function delete(int $id): void
+    {
+        $this->setSql("DELETE FROM $this->table WHERE id = :id");
+        $this->query($this->sql, ['id' => $id]);
+    }
+
+    private function isEmpty($value): bool
+    {
         return empty($value);
     }
 
-    private function getColumns(array $select) : string {
+    private function getColumns(array $select): string
+    {
         return "$this->table." . implode(", $this->table.", array_values($select));
     }
 
@@ -243,14 +266,15 @@ class QueryBuilder
         $this->orWhere .= ' OR '.$orWhere;
     }
 
-    public function setLimit(int $limit) : self
+    public function setLimit(int $limit): self
     {
         $this->limit = $limit;
 
         return $this;
     }
 
-    public function query($sql, $params = []) {
+    public function query($sql, $params = [])
+    {
         $stmt = $this->db->prepare($sql);
         if (!empty($params)) {
             //Биндим

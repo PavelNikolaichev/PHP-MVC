@@ -25,34 +25,34 @@ class ServiceProvider
     private function bootstrap(): void
     {
         $this->map = [
-            UserController::class => function(string $class, ServiceProvider $serviceProvider) {
+            UserController::class => function (string $class, ServiceProvider $serviceProvider) {
                 return new $class(
                     $serviceProvider->make(UserRepository::class),
                     $serviceProvider->make(View::class)
                 );
             },
-            UserListController::class => function(string $class, ServiceProvider $serviceProvider) {
+            UserListController::class => function (string $class, ServiceProvider $serviceProvider) {
                 return new $class(
                     $serviceProvider->make(UserRepository::class),
                     $serviceProvider->make(View::class)
                 );
             },
-            UserModel::class => function(string $class, ServiceProvider $serviceProvider) {
+            UserModel::class => function (string $class, ServiceProvider $serviceProvider) {
                 return new $class(
                     $serviceProvider->make(QueryBuilder::class)
                 );
             },
-            UserRepository::class => function(string $class, ServiceProvider $serviceProvider) {
+            UserRepository::class => function (string $class, ServiceProvider $serviceProvider) {
                 return new $class(
                     $serviceProvider->make(QueryBuilder::class)
                 );
             },
-            QueryBuilder::class => function(string $class, ServiceProvider $serviceProvider) {
+            QueryBuilder::class => function (string $class, ServiceProvider $serviceProvider) {
                 return new $class(
                     $serviceProvider->make('ConnectDb')->getPDO()
                 );
             },
-            'ConnectDb' => function() {
+            'ConnectDb' => function () {
                 return new Database();
             },
         ];
@@ -76,14 +76,14 @@ class ServiceProvider
 
             $this->instances[$class] = isset($this->map[$class])
                 ? call_user_func($this->map[$class])
-                : new $class;
+                : new $class();
 
             return $this->instances[$class];
         }
 
         return isset($this->map[$class])
             ? call_user_func($this->map[$class], $class, $this)
-            : new $class;
+            : new $class();
     }
 
     /**
@@ -119,6 +119,4 @@ class ServiceProvider
 
         return $this;
     }
-
-
 }

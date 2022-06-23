@@ -3,7 +3,7 @@
 ?>
 <h1>User List</h1>
 
-<form action="/user-list" method="post">
+<form action="/user-list" method="post" id="form">
     <div class="form-group row">
         <label for="inputEmail" class="col-sm-1 col-form-label">Email</label>
         <div class="col-sm-10">
@@ -50,7 +50,7 @@
 
     <div class="form-group row">
         <div class="col-sm-10">
-            <button type="submit" class="btn btn-primary">Sign in</button>
+            <button type="submit" class="btn btn-primary">Create</button>
         </div>
     </div>
 </form>
@@ -68,7 +68,7 @@
             </tr>
         </thead>
         <tbody>
-            <?php foreach($data['users'] as $user): ?>
+            <?php foreach ($data['users'] as $user): ?>
                 <tr>
                     <th scope="row"><?= $user->id ?></th>
                     <th><?= $user->name ?></th>

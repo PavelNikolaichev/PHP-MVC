@@ -4,7 +4,7 @@
 
 <h1>User</h1>
 <?php if ($data['user']): ?>
-    <table class="table table-striped table-hover">
+    <table class="table table-striped table-hover" id="table">
         <thead class="thead-dark">
         <tr>
             <th scope="col">#</th>
@@ -70,9 +70,13 @@
 
         <div class="form-group row">
             <div class="col-sm-10">
-                <button type="submit" class="btn btn-primary">Sign in</button>
+                <button type="submit" class="btn btn-primary">Edit</button>
             </div>
         </div>
+    </form>
+    <form action="/user?id=<?= $data['user']->id ?>" method="post">
+        <input type="hidden" name="id" value="<?= $data['user']->id ?>">
+        <button type="submit" name="delete" class="btn btn-danger">Delete</button>
     </form>
 <?php else: ?>
     <p>User wasn't found</p>
