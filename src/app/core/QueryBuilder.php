@@ -35,6 +35,7 @@ class QueryBuilder
         }
         $this->setTable($table);
         $this->setColumns(" $table.ID, $table.NAME");
+
         return $this;
     }
 
@@ -45,30 +46,35 @@ class QueryBuilder
         $relation1 = $this->getRelation($relations);
         $relation2 = $this->getRelation($this->relations);
         $this->setJoin(" LEFT JOIN $this->tableProp ON $relation1 = $relation2");
+
         return $this;
     }
 
     public function select(array $select): self
     {
         $this->setColumns($this->getColumns($select));
+
         return $this;
     }
 
     public function where(string $exp1, string $cond, string $exp2): self
     {
         $this->setWhere($this->getWhere($exp1, $cond, $exp2));
+
         return $this;
     }
 
     public function andWhere(string $exp1, string $cond, string $exp2): self
     {
         $this->setAndWhere($this->getWhere($exp1, $cond, $exp2));
+
         return $this;
     }
 
     public function orWhere(string $exp1, string $cond, string $exp2): self
     {
         $this->setOrWhere($this->getWhere($exp1, $cond, $exp2));
+
         return $this;
     }
 
@@ -100,6 +106,7 @@ class QueryBuilder
         } catch (\Exception $e) {
             die($e);
         }
+
         return ' '.$exp1.' '.$cond.' '."'$exp2'";
     }
 
@@ -120,6 +127,7 @@ class QueryBuilder
     private function isCondition(string $code): bool
     {
         $array = ['=', '>', '<', '<=', '>='];
+
         return in_array($code, $array);
     }
 
@@ -128,9 +136,10 @@ class QueryBuilder
         $relation = $relations;
         $keys = array_keys($relation);
         $values = array_values($relation);
-        $res = array_shift($keys).".".array_shift($values);
+        $res = array_shift($keys).'.'.array_shift($values);
         $relation = array_combine($keys, $values);
         $this->relations = $relation;
+
         return $res;
     }
 
@@ -146,18 +155,20 @@ class QueryBuilder
         } catch (\Exception $e) {
             die($e);
         }
+
         return $value;
     }
 
     private function checkValue($sample): string
     {
         if (!is_string($sample) && !is_int($sample)) {
-            throw new \Exception("Must be of the type string or integer, ".gettype($sample)." given");
+            throw new \Exception('Must be of the type string or integer, '.gettype($sample).' given');
         }
         $value = 'ID';
         if (!is_numeric($sample)) {
             $value = 'CODE';
         }
+
         return $value;
     }
 
@@ -285,6 +296,7 @@ class QueryBuilder
 
         $stmt->execute();
         $this->sql = '';
+
         return $stmt;
     }
 }

@@ -20,6 +20,7 @@ class Database
 
     /**
      * Method to get PDO instance from Database class instance.
+     *
      * @return PDO - PDO instance.
      */
     final public function getPdo(): PDO

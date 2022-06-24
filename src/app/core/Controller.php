@@ -9,7 +9,7 @@ class Controller
 {
     /**
      * @var Model - Model object.
-     * @var View - View object.
+     * @var View  - View object.
      */
     public UserRepository $model;
     public View $view;
@@ -25,6 +25,7 @@ class Controller
 
     /**
      * Method to pass the data to the view.
+     *
      * @return IResponse
      */
     public function actionIndex(): IResponse

@@ -8,8 +8,8 @@ class HTMLResponse implements IResponse
     private string $body;
 
     /**
-     * @param array $headers - headers of the response.
-     * @param string $body - body of the response.
+     * @param array  $headers - headers of the response.
+     * @param string $body    - body of the response.
      */
     public function __construct(array $headers, string $body)
     {
@@ -31,13 +31,5 @@ class HTMLResponse implements IResponse
     final public function getBody(): string
     {
         return $this->body;
-    }
-
-    /**
-     * @throws \JsonException
-     */
-    final public function toJSON(): string
-    {
-        return json_encode([$this->headers, $this->body], JSON_THROW_ON_ERROR);
     }
 }

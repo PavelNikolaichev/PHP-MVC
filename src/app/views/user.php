@@ -4,31 +4,12 @@
 
 <h1>User</h1>
 <?php if ($data['user']): ?>
-    <table class="table table-striped table-hover" id="table">
-        <thead class="thead-dark">
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Name</th>
-            <th scope="col">Email</th>
-            <th scope="col">Gender</th>
-            <th scope="col">Status</th>
-        </thead>
-        <tbody>
-        <tr>
-            <th scope="row"><?= $data['user']->id ?></th>
-            <th><?= $data['user']->name ?></th>
-            <th><?= $data['user']->email ?></th>
-            <th><?= $data['user']->gender ?></th>
-            <th><?= $data['user']->status ?></th>
-        </tr>
-        </tbody>
-    </table>
-    <form action="/user?id=<?= $data['user']->id ?>" method="post">
+    <form action="/user?id=<?= $data['user']->id ?>" method="post" id="userForm">
         <div class="form-group row">
             <label for="inputEmail" class="col-sm-1 col-form-label">Email</label>
             <div class="col-sm-10">
-                <input type="email" class="form-control <?= isset($data['errors']['email']) ? 'is-invalid' : '' ?>" id="inputEmail" name="email" value="<?= htmlspecialchars($data['user']->email) ?>">
-                <div class="invalid-feedback">
+                <input type="email" class="form-control <?= isset($data['errors']['email']) ? 'is-invalid' : '' ?>" id="inputEmail" name="email" value="<?= htmlspecialchars($data['user']->email) ?>" autocomplete="off">
+                <div class="invalid-feedback" id="invalid-email">
                     <?= $data['errors']['email'] ?? '' ?>
                 </div>
             </div>
@@ -36,8 +17,8 @@
         <div class="form-group row">
             <label for="inputName" class="col-sm-1 col-form-label">Name</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control <?= isset($data['errors']['name']) ? 'is-invalid' : '' ?>" id="inputName" name="name" value="<?= htmlspecialchars($data['user']->name) ?>">
-                <div class="invalid-feedback">
+                <input type="text" class="form-control <?= isset($data['errors']['name']) ? 'is-invalid' : '' ?>" id="inputName" name="name" value="<?= htmlspecialchars($data['user']->name) ?>" autocomplete="off">
+                <div class="invalid-feedback" id="invalid-name">
                     <?= $data['errors']['name'] ?? '' ?>
                 </div>
             </div>
@@ -51,7 +32,7 @@
                 <option value="Male" <?= $data['user']->gender === 'Male' ? 'selected' : '' ?> >Male</option>
                 <option value="Female" <?= $data['user']->gender === 'Female' ? 'selected' : '' ?> >Female</option>
             </select>
-            <div class="invalid-feedback">
+            <div class="invalid-feedback" id="invalid-gender">
                 <?= $data['errors']['gender'] ?? '' ?>
             </div>
         </div>
@@ -63,7 +44,7 @@
                 <option value="Active" <?= $data['user']->gender === 'Active' ? 'selected' : '' ?> >Active</option>
                 <option value="Inactive" <?= $data['user']->gender === 'Inactive' ? 'selected' : '' ?> >Inactive</option>
             </select>
-            <div class="invalid-feedback">
+            <div class="invalid-feedback" id="invalid-status">
                 <?= $data['errors']['status'] ?? '' ?>
             </div>
         </div>
@@ -73,10 +54,6 @@
                 <button type="submit" class="btn btn-primary">Edit</button>
             </div>
         </div>
-    </form>
-    <form action="/user?id=<?= $data['user']->id ?>" method="post">
-        <input type="hidden" name="id" value="<?= $data['user']->id ?>">
-        <button type="submit" name="delete" class="btn btn-danger">Delete</button>
     </form>
 <?php else: ?>
     <p>User wasn't found</p>

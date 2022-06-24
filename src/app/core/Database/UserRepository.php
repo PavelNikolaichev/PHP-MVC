@@ -17,6 +17,7 @@ class UserRepository implements IRepository
 
     /**
      * Method to get all users from the database.
+     *
      * @return array - an array of users.
      */
     final public function fetchAll(): array
@@ -37,7 +38,9 @@ class UserRepository implements IRepository
 
     /**
      * Method to get one user from the database.
+     *
      * @param int $id
+     *
      * @return UserModel|null - an array of user fields.
      */
     final public function fetch(int $id): UserModel|null
@@ -55,6 +58,13 @@ class UserRepository implements IRepository
         return new UserModel(...$data[0]);
     }
 
+    /**
+     * Method to save or update a user to the database. The behavior is determined by the presence of the id field.
+     *
+     * @param Model $model - Model instance to save.
+     *
+     * @return Model
+     */
     final public function save(Model $model): Model
     {
         if (null === $model->id) {
@@ -71,7 +81,9 @@ class UserRepository implements IRepository
     }
 
     /**
-     * @inheritDoc
+     * Method to delete a user from the database.
+     *
+     * @param int $id - id of the user to be deleted.
      */
     final public function delete(int $id): void
     {

@@ -2,6 +2,7 @@
 
 namespace App\Core;
 
+use App\controllers\DeleteController;
 use App\controllers\UserController;
 use App\controllers\UserListController;
 use App\Core\Database\Database;
@@ -22,6 +23,11 @@ class ServiceProvider
         $this->bootstrap();
     }
 
+    /**
+     * Bootstraps the application.
+     *
+     * @return void
+     */
     private function bootstrap(): void
     {
         $this->map = [
@@ -32,6 +38,12 @@ class ServiceProvider
                 );
             },
             UserListController::class => function (string $class, ServiceProvider $serviceProvider) {
+                return new $class(
+                    $serviceProvider->make(UserRepository::class),
+                    $serviceProvider->make(View::class)
+                );
+            },
+            DeleteController::class => function (string $class, ServiceProvider $serviceProvider) {
                 return new $class(
                     $serviceProvider->make(UserRepository::class),
                     $serviceProvider->make(View::class)
@@ -64,7 +76,9 @@ class ServiceProvider
 
     /**
      * Method to make an instance of a class.
+     *
      * @param string $class - name of the class.
+     *
      * @return mixed - instance of the class.
      */
     final public function make(string $class): mixed
@@ -88,6 +102,7 @@ class ServiceProvider
 
     /**
      * Method to set a map of classes.
+     *
      * @param array $map - map of classes. Should look like: [className => callable function to create].
      */
     final public function setMap(array $map): void
@@ -97,8 +112,10 @@ class ServiceProvider
 
     /**
      * Method to change a parameter of the map.
-     * @param string $className - name of the class.
-     * @param callable $func - function to be called when the class is instantiated.
+     *
+     * @param string   $className - name of the class.
+     * @param callable $func      - function to be called when the class is instantiated.
+     *
      * @return $this
      */
     final public function setClass(string $className, callable $func): ServiceProvider
@@ -110,7 +127,9 @@ class ServiceProvider
 
     /**
      * Method to add a class to the singletons array.
+     *
      * @param string $className - name of the class.
+     *
      * @return $this
      */
     final public function addSingleton(string $className): ServiceProvider

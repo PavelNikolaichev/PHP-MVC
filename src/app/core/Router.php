@@ -12,38 +12,50 @@ class Router
     private const METHOD_GET = 'GET';
 
     /**
-     * @param string $path
-     * @param callable $callback
+     * Method to add a route on GET-method.
+     *
+     * @param string   $path     - path to the route.
+     * @param callable $callback - callback to be executed when the route is matched.
+     *
      * @return void
      */
-    public function get(string $path, callable $callback): void
+    final public function get(string $path, callable $callback): void
     {
         $this->addRoute(self::METHOD_GET, $path, $callback);
     }
 
     /**
-     * @param string $path
-     * @param callable $callback
+     * Method to add a route on POST-method.
+     *
+     * @param string   $path     - path to the route.
+     * @param callable $callback - callback to be executed when the route is matched.
+     *
      * @return void
      */
-    public function post(string $path, callable $callback): void
+    final public function post(string $path, callable $callback): void
     {
         $this->addRoute(self::METHOD_POST, $path, $callback);
     }
 
     /**
-     * @param callable $callback
+     * Method to add a route on 404 response.
+     *
+     * @param callable $callback - callback to be executed when the route is matched.
+     *
      * @return void
      */
-    public function addNotFoundRoute(callable $callback): void
+    final public function addNotFoundRoute(callable $callback): void
     {
         $this->notFoundRoute = $callback;
     }
 
     /**
-     * @param string $method
-     * @param string $path
-     * @param callable $callback
+     * Method to add the route.
+     *
+     * @param string   $method   - method of the route.
+     * @param string   $path     - path to the route.
+     * @param callable $callback - callback to be executed when the route is matched.
+     *
      * @return void
      */
     private function addRoute(string $method, string $path, callable $callback): void
@@ -56,9 +68,11 @@ class Router
     }
 
     /**
-     * @return IResponse
+     * Method to match the route.
+     *
+     * @return IResponse - response to be returned.
      */
-    public function run(): IResponse
+    final public function run(): IResponse
     {
         $requestUri = parse_url($_SERVER['REQUEST_URI']);
         $requestPath = $requestUri['path'];

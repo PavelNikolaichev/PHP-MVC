@@ -12,7 +12,9 @@ class UserController extends Controller
 {
     /**
      * Method to pass the data to the view.
+     *
      * @param array $params
+     *
      * @return IResponse
      */
     final public function actionIndex(array $params = []): IResponse
@@ -20,23 +22,19 @@ class UserController extends Controller
         $data = [];
 
         if ($_POST) {
-            if (!isset($params['delete'])) {
-                $model = new UserModel(...$params);
-                $data['errors'] = $model->validate();
+            $model = new UserModel(...$params);
+            $data['errors'] = $model->validate();
 
-                if (empty($data['errors'])) {
-                    $this->model->save($model);
-                }
-            } else {
-                $this->model->delete($params['id']);
+            if (empty($data['errors'])) {
+                $this->model->save($model);
             }
 
             $data['user'] = $this->model->fetch($params['id']);
-            return new JSONResponse(['200 OK'], $data['user']);
+
+            return new JSONResponse(['200 OK'], $data);
         }
 
         $data['user'] = $this->model->fetch($params['id']);
-//        $body = $data['user'];
         $body = $this->view->render('user', $data);
 
         return new HTMLResponse(['200 OK'], $body);

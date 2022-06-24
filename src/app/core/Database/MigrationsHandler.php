@@ -56,6 +56,7 @@ class MigrationsHandler
 
     /**
      * @param array $migrations
+     *
      * @return void
      */
     private function saveMigrations(array $migrations): void
@@ -72,6 +73,7 @@ class MigrationsHandler
 
     /**
      * @param bool|array $appliedMigrations
+     *
      * @return array|false
      */
     private function getMigrationsFromDir(bool|array $appliedMigrations): array|false
@@ -83,6 +85,7 @@ class MigrationsHandler
 
     /**
      * @param bool|array $files
+     *
      * @return array
      */
     private function runMigrations(bool|array $files): array

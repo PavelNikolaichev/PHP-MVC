@@ -1,5 +1,6 @@
 <?php
 
+use App\controllers\DeleteController;
 use App\controllers\UserController;
 use App\controllers\UserListController;
 use App\core\Responses\HTMLResponse;
@@ -17,7 +18,7 @@ $pdo = $serviceProvider->make('ConnectDb');
 $router = $serviceProvider->make(Router::class);
 
 $router->get('/', function ($params) use ($serviceProvider) {
-    return $serviceProvider->make(UserController::class)->actionIndex($params);
+    return $serviceProvider->make(UserListController::class)->actionIndex($params);
 });
 
 $router->get('/user', function ($params) use ($serviceProvider) {
@@ -32,6 +33,10 @@ $router->get('/user-list', function ($params) use ($serviceProvider) {
 });
 $router->post('/user-list', function ($params) use ($serviceProvider) {
     return $serviceProvider->make(UserListController::class)->actionIndex($params);
+});
+
+$router->post('/delete', function ($params) use ($serviceProvider) {
+    return $serviceProvider->make(DeleteController::class)->actionIndex($params);
 });
 
 $router->addNotFoundRoute(function () {

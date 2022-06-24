@@ -24,6 +24,7 @@ class UserModel extends Model
 
     /**
      * Validation of input data.
+     *
      * @return array|null - array of errors.
      */
     final public function validate(): array|null
@@ -31,6 +32,7 @@ class UserModel extends Model
         foreach (get_object_vars($this) as $field => $value) {
             if (null === $value && $field !== 'id') {
                 trigger_error("$field is empty!");
+
                 return null;
             }
         }
@@ -45,6 +47,7 @@ class UserModel extends Model
 
     /**
      * Validates name field.
+     *
      * @return void
      */
     private function validateName(): void
@@ -58,6 +61,7 @@ class UserModel extends Model
 
     /**
      * Validates email field.
+     *
      * @return void
      */
     private function validateEmail(): void
@@ -71,13 +75,14 @@ class UserModel extends Model
 
     /**
      * Validates gender field.
+     *
      * @return void
      */
     private function validateGender(): void
     {
         $genders = [
             'Male',
-            'Female'
+            'Female',
         ];
 
         if (!in_array($this->gender, $genders)) {
@@ -87,13 +92,14 @@ class UserModel extends Model
 
     /**
      * Validates status field.
+     *
      * @return void
      */
     private function validateStatus(): void
     {
         $statuses = [
             'Active',
-            'Inactive'
+            'Inactive',
         ];
 
         if (!in_array($this->status, $statuses)) {
@@ -103,8 +109,10 @@ class UserModel extends Model
 
     /**
      * Adds an error into errors array.
+     *
      * @param string $field - field that has an error.
      * @param string $error - error message.
+     *
      * @return void
      */
     private function addError(string $field, string $error): void
