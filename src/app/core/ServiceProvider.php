@@ -90,14 +90,37 @@ class ServiceProvider
 
             $this->instances[$class] = isset($this->map[$class])
                 ? call_user_func($this->map[$class])
-                : new $class();
+                : $this->makeThroughReflection($class);
 
             return $this->instances[$class];
         }
 
         return isset($this->map[$class])
             ? call_user_func($this->map[$class], $class, $this)
-            : new $class();
+            : $this->makeThroughReflection($class);
+    }
+
+    /**
+     * @param string $class - name of the class.
+     * @return mixed - instance of the class.
+     * @throws \ReflectionException - if class does not exist.
+     */
+    final public function makeThroughReflection(string $class): mixed
+    {
+        $reflection = new ReflectionClass($class);
+
+        if ($constructor = $reflection->getConstructor()) {
+            $parameters = $constructor->getParameters();
+            $dependencies = [];
+
+            foreach ($parameters as $parameter) {
+                $dependencies[] = $this->make($parameter->getType());
+            }
+
+            return $reflection->newInstanceArgs($dependencies);
+        }
+
+        return $reflection->newInstanceArgs();
     }
 
     /**
