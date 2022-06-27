@@ -8,7 +8,7 @@
         <label for="inputEmail" class="col-sm-1 col-form-label">Email</label>
         <div class="col-sm-10">
             <input type="email" class="form-control <?= isset($data['errors']['email']) ? 'is-invalid' : '' ?>" id="inputEmail" name="email" placeholder="example@gmail.com" autocomplete="off">
-            <div class="invalid-feedback">
+            <div class="invalid-feedback" id="invalid-email">
                 <?= $data['errors']['email'] ?? '' ?>
             </div>
         </div>
@@ -17,7 +17,7 @@
         <label for="inputName" class="col-sm-1 col-form-label">Name</label>
         <div class="col-sm-10">
             <input type="text" class="form-control <?= isset($data['errors']['name']) ? 'is-invalid' : '' ?>" id="inputName" name="name" placeholder="Your name" autocomplete="off">
-            <div class="invalid-feedback">
+            <div class="invalid-feedback" id="invalid-name">
                 <?= $data['errors']['name'] ?? '' ?>
             </div>
         </div>
@@ -31,7 +31,7 @@
             <option value="Male" selected>Male</option>
             <option value="Female">Female</option>
         </select>
-        <div class="invalid-feedback">
+        <div class="invalid-feedback" id="invalid-gender">
             <?= $data['errors']['gender'] ?? '' ?>
         </div>
     </div>
@@ -43,7 +43,7 @@
             <option value="Active" selected>Active</option>
             <option value="Inactive">Inactive</option>
         </select>
-        <div class="invalid-feedback">
+        <div class="invalid-feedback" id="invalid-status">
             <?= $data['errors']['status'] ?? '' ?>
         </div>
     </div>
@@ -71,7 +71,7 @@
         <tbody>
             <?php foreach ($data['users'] as $user): ?>
                 <tr>
-                    <th scope="row"><?= $user->id ?></th>
+                    <th scope="row" id="user-<?= $user->id ?>"><?= $user->id ?></th>
                     <th><?= $user->name ?></th>
                     <th><?= $user->email ?></th>
                     <th><?= $user->gender ?></th>

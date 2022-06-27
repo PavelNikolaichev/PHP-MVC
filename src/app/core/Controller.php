@@ -2,7 +2,7 @@
 
 namespace App\Core;
 
-use App\Core\Database\UserRepository;
+use App\core\Database\IRepository;
 use App\core\Responses\IResponse;
 
 class Controller
@@ -11,13 +11,13 @@ class Controller
      * @var Model - Model object.
      * @var View  - View object.
      */
-    public UserRepository $model;
+    public IRepository $model;
     public View $view;
 
     /**
      * Constructor for Controller.
      */
-    public function __construct(UserRepository $model, View $view)
+    public function __construct(IRepository $model, View $view)
     {
         $this->model = $model;
         $this->view = $view;

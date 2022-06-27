@@ -1,25 +1,26 @@
-function tableUpdate(users) {
-    $('#users tbody').empty();
+function tableUpdate(user) {
+    alert(user);
 
-    if (users.length > 0) {
-        users.forEach(user => {
-            let row = '<tr>';
+    let row = '<tr>';
 
-            row += '<th scope="row">' + user['id'] + '</th>' +
-                '<th>' + user['name'] + '</th>' +
-                '<th>' + user['email'] + '</th>' +
-                '<th>' + user['gender'] + '</th>' +
-                '<th>' + user['status'] + '</th>' +
-                '<th><a href="/user?id=' + user['id'] + '" class="btn btn-primary">Edit</a></th>' +
-                '<th><form action="/delete?id=' + user['id'] + '" method="post">' +
-                '<input type="hidden" name="id" value="' + user['id'] + '">' +
-                '<button type="submit" name="delete" class="btn btn-danger">Delete</button></form></th>'
+    row += '<th scope="row" id="user-' + user['id'] + '">' + user['id'] + '</th>' +
+        '<th>' + user['name'] + '</th>' +
+        '<th>' + user['email'] + '</th>' +
+        '<th>' + user['gender'] + '</th>' +
+        '<th>' + user['status'] + '</th>' +
+        '<th><a href="/user?id=' + user['id'] + '" class="btn btn-primary">Edit</a></th>' +
+        '<th><form action="/delete?id=' + user['id'] + '" method="post" class="form-delete">' +
+        '<input type="hidden" name="id" value="' + user['id'] + '">' +
+        '<button type="submit" name="delete" class="btn btn-danger">Delete</button></form></th>'
 
-            row += '</tr>';
+    row += '</tr>';
+    alert(row);
 
-            $('#users').append(row);
-        })
-    }
+    $('#users').append(row);
+}
+
+function tableDelete(id) {
+    $('#user-' + id).parent().remove();
 }
 
 $(document).ready(function () {
@@ -45,10 +46,10 @@ $(document).ready(function () {
                         name = name[0].toUpperCase() + name.slice(1);
                         $('#input' + name).addClass("is-invalid");
                     })
+                } else {
+                    let users = res['user'];
+                    tableUpdate(users);
                 }
-
-                let users = res['users'];
-                tableUpdate(users);
             }
         })
     })
@@ -66,8 +67,8 @@ $(document).ready(function () {
             success: function (result) {
                 let res = JSON.parse(result);
 
-                let users = res['users'];
-                tableUpdate(users);
+                let id = res['deleted_id'];
+                tableDelete(id);
             }
         })
     })

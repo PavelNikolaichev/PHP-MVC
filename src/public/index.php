@@ -1,8 +1,6 @@
 <?php
 
-use App\controllers\DeleteController;
 use App\controllers\UserController;
-use App\controllers\UserListController;
 use App\core\Responses\HTMLResponse;
 use App\core\Responses\IResponse;
 use App\Core\Router;
@@ -18,25 +16,25 @@ $pdo = $serviceProvider->make('ConnectDb');
 $router = $serviceProvider->make(Router::class);
 
 $router->get('/', function ($params) use ($serviceProvider) {
-    return $serviceProvider->make(UserListController::class)->actionIndex($params);
+    return $serviceProvider->make(UserController::class)->list($params);
 });
 
 $router->get('/user', function ($params) use ($serviceProvider) {
-    return $serviceProvider->make(UserController::class)->actionIndex($params);
+    return $serviceProvider->make(UserController::class)->user($params);
 });
 $router->post('/user', function ($params) use ($serviceProvider) {
-    return $serviceProvider->make(UserController::class)->actionIndex($params);
+    return $serviceProvider->make(UserController::class)->createOrUpdate($params);
 });
 
 $router->get('/user-list', function ($params) use ($serviceProvider) {
-    return $serviceProvider->make(UserListController::class)->actionIndex($params);
+    return $serviceProvider->make(UserController::class)->list($params);
 });
 $router->post('/user-list', function ($params) use ($serviceProvider) {
-    return $serviceProvider->make(UserListController::class)->actionIndex($params);
+    return $serviceProvider->make(UserController::class)->createOrUpdate($params);
 });
 
 $router->post('/delete', function ($params) use ($serviceProvider) {
-    return $serviceProvider->make(DeleteController::class)->actionIndex($params);
+    return $serviceProvider->make(UserController::class)->delete($params);
 });
 
 $router->addNotFoundRoute(function () {

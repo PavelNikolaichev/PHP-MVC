@@ -54,8 +54,8 @@ class UserModel extends Model
     {
         if (empty($this->name)) {
             $this->addError('name', 'Name cannot be empty.');
-        } elseif (!preg_match('/^[a-zA-Z\d]{6,16}$/', $this->name)) {
-            $this->addError('name', 'Name must be 6-16 chars long and contain letters or numbers.');
+        } elseif (!preg_match('/^[a-zA-Z\d]{4,16}$/', $this->name)) {
+            $this->addError('name', 'Name must be 4-16 chars long and contain letters or numbers.');
         }
     }
 
