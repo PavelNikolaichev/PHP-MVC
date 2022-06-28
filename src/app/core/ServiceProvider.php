@@ -2,12 +2,12 @@
 
 namespace App\Core;
 
-use App\controllers\DeleteController;
 use App\controllers\UserController;
-use App\controllers\UserListController;
 use App\Core\Database\Database;
+use App\Core\Database\RESTRepository;
 use App\Core\Database\UserRepository;
 use App\Models\UserModel;
+use ReflectionClass;
 
 class ServiceProvider
 {
@@ -33,32 +33,25 @@ class ServiceProvider
         $this->map = [
             UserController::class => function (string $class, ServiceProvider $serviceProvider) {
                 return new $class(
-                    $serviceProvider->make(UserRepository::class),
+                    $serviceProvider->make(RESTRepository::class),
                     $serviceProvider->make(View::class)
                 );
             },
-            UserListController::class => function (string $class, ServiceProvider $serviceProvider) {
-                return new $class(
-                    $serviceProvider->make(UserRepository::class),
-                    $serviceProvider->make(View::class)
-                );
-            },
-            DeleteController::class => function (string $class, ServiceProvider $serviceProvider) {
-                return new $class(
-                    $serviceProvider->make(UserRepository::class),
-                    $serviceProvider->make(View::class)
-                );
-            },
-            UserModel::class => function (string $class, ServiceProvider $serviceProvider) {
-                return new $class(
-                    $serviceProvider->make(QueryBuilder::class)
-                );
-            },
-            UserRepository::class => function (string $class, ServiceProvider $serviceProvider) {
-                return new $class(
-                    $serviceProvider->make(QueryBuilder::class)
-                );
-            },
+//            UserModel::class => function (string $class, ServiceProvider $serviceProvider) {
+//                return new $class(
+//                    $serviceProvider->make(QueryBuilder::class)
+//                );
+//            },
+//            RESTRepository::class => function (string $class, ServiceProvider $serviceProvider) {
+//                return new $class(
+//                    $serviceProvider->make(CurlManager::class)
+//                );
+//            },
+//            UserRepository::class => function (string $class, ServiceProvider $serviceProvider) {
+//                return new $class(
+//                    $serviceProvider->make(QueryBuilder::class)
+//                );
+//            },
             QueryBuilder::class => function (string $class, ServiceProvider $serviceProvider) {
                 return new $class(
                     $serviceProvider->make('ConnectDb')->getPDO()
@@ -80,6 +73,7 @@ class ServiceProvider
      * @param string $class - name of the class.
      *
      * @return mixed - instance of the class.
+     * @throws \ReflectionException
      */
     final public function make(string $class): mixed
     {
@@ -101,6 +95,7 @@ class ServiceProvider
     }
 
     /**
+     * Method to make an instance of a class through reflection.
      * @param string $class - name of the class.
      * @return mixed - instance of the class.
      * @throws \ReflectionException - if class does not exist.
