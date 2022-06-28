@@ -1,0 +1,14 @@
+{
+    "name": "root/html",
+    "require": {
+        "vlucas/phpdotenv": "^5.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": ["app/"]
+        }
+    },
+    "scripts": {
+        "migration": "php migrations.php"
+    }
+}
