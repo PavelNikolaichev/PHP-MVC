@@ -1,6 +1,4 @@
 function tableUpdate(user) {
-    alert(user);
-
     let row = '<tr>';
 
     row += '<th scope="row" id="user-' + user['id'] + '">' + user['id'] + '</th>' +
@@ -14,9 +12,25 @@ function tableUpdate(user) {
         '<button type="submit" name="delete" class="btn btn-danger">Delete</button></form></th>'
 
     row += '</tr>';
-    alert(row);
 
-    $('#users').append(row);
+    $('#users').append(row).on('submit', '.form-delete', function (event) {
+        event.preventDefault();
+
+        $.ajax({
+            type: $(this).attr('method'),
+            url: $(this).attr('action'),
+            data: new FormData(this),
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function (result) {
+                let res = JSON.parse(result);
+
+                let id = res['deleted_id'];
+                tableDelete(id);
+            }
+        })
+    });
 }
 
 function tableDelete(id) {
@@ -72,4 +86,5 @@ $(document).ready(function () {
             }
         })
     })
+    $(document).on('')
 })

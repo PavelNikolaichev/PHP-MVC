@@ -5,8 +5,6 @@ namespace App\Core;
 use App\controllers\UserController;
 use App\Core\Database\Database;
 use App\Core\Database\RESTRepository;
-use App\Core\Database\UserRepository;
-use App\Models\UserModel;
 use ReflectionClass;
 
 class ServiceProvider
@@ -37,21 +35,6 @@ class ServiceProvider
                     $serviceProvider->make(View::class)
                 );
             },
-//            UserModel::class => function (string $class, ServiceProvider $serviceProvider) {
-//                return new $class(
-//                    $serviceProvider->make(QueryBuilder::class)
-//                );
-//            },
-//            RESTRepository::class => function (string $class, ServiceProvider $serviceProvider) {
-//                return new $class(
-//                    $serviceProvider->make(CurlManager::class)
-//                );
-//            },
-//            UserRepository::class => function (string $class, ServiceProvider $serviceProvider) {
-//                return new $class(
-//                    $serviceProvider->make(QueryBuilder::class)
-//                );
-//            },
             QueryBuilder::class => function (string $class, ServiceProvider $serviceProvider) {
                 return new $class(
                     $serviceProvider->make('ConnectDb')->getPDO()
