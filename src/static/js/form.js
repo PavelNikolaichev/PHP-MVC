@@ -26,6 +26,10 @@ function tableUpdate(user) {
             success: function (result) {
                 let res = JSON.parse(result);
 
+                if (res['message']) {
+                    alert(res['message']);
+                }
+
                 let id = res['deleted_id'];
                 tableDelete(id);
             }
@@ -50,6 +54,11 @@ $(document).ready(function () {
             processData: false,
             success: function (result) {
                 let res = JSON.parse(result);
+
+                if (res['message']) {
+                    alert(res['message']);
+                }
+
                 let errors = Object.entries(res['errors']);
 
                 if (errors.length > 0) {
@@ -70,21 +79,26 @@ $(document).ready(function () {
 
     $('.form-delete').submit(function (event) {
         event.preventDefault();
+        if (confirm("Are you sure you want to delete this user?")) {
+            $.ajax({
+                type: $(this).attr('method'),
+                url: $(this).attr('action'),
+                data: new FormData(this),
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (result) {
+                    let res = JSON.parse(result);
 
-        $.ajax({
-            type: $(this).attr('method'),
-            url: $(this).attr('action'),
-            data: new FormData(this),
-            contentType: false,
-            cache: false,
-            processData: false,
-            success: function (result) {
-                let res = JSON.parse(result);
+                    if (res['message']) {
+                        alert(res['message']);
+                    }
 
-                let id = res['deleted_id'];
-                tableDelete(id);
-            }
-        })
+                    let id = res['deleted_id'];
+
+                    tableDelete(id);
+                }
+            })
+        }
     })
-    $(document).on('')
 })

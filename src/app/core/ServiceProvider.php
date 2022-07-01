@@ -4,6 +4,7 @@ namespace App\Core;
 
 use App\controllers\UserController;
 use App\Core\Database\Database;
+use App\core\Database\IRepository;
 use App\Core\Database\RESTRepository;
 use ReflectionClass;
 
@@ -31,13 +32,18 @@ class ServiceProvider
         $this->map = [
             UserController::class => function (string $class, ServiceProvider $serviceProvider) {
                 return new $class(
-                    $serviceProvider->make(RESTRepository::class),
+                    $serviceProvider->make(IRepository::class),
                     $serviceProvider->make(View::class)
                 );
             },
             QueryBuilder::class => function (string $class, ServiceProvider $serviceProvider) {
                 return new $class(
                     $serviceProvider->make('ConnectDb')->getPDO()
+                );
+            },
+            IRepository::class => function (string $class, ServiceProvider $serviceProvider) {
+                return new RESTRepository(
+                    $serviceProvider->make(CurlManager::class)
                 );
             },
             'ConnectDb' => function () {

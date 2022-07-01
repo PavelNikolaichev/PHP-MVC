@@ -21,7 +21,6 @@ class UserController extends Controller
     {
         $data = $this->sendUser($params);
 
-//        $data['user'] = $this->model->fetch($params['id']);
 
         return new JSONResponse(['200 OK'], $data);
     }

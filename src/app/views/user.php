@@ -29,8 +29,8 @@
                 <label class="input-group-text" for="inputGender">Gender</label>
             </div>
             <select class="custom-select <?= isset($data['errors']['gender']) ? 'is-invalid' : '' ?>" id="inputGender" name="gender">
-                <option value="Male" <?= $data['user']->gender === 'Male' ? 'selected' : '' ?> >Male</option>
-                <option value="Female" <?= $data['user']->gender === 'Female' ? 'selected' : '' ?> >Female</option>
+                <option value="male" <?= $data['user']->gender === 'male' ? 'selected' : '' ?> >Male</option>
+                <option value="female" <?= $data['user']->gender === 'female' ? 'selected' : '' ?> >Female</option>
             </select>
             <div class="invalid-feedback" id="invalid-gender">
                 <?= $data['errors']['gender'] ?? '' ?>
@@ -41,8 +41,8 @@
                 <label class="input-group-text" for="inputStatus">Status</label>
             </div>
             <select class="custom-select <?= isset($data['errors']['status']) ? 'is-invalid' : '' ?>" id="inputStatus" name="status">
-                <option value="Active" <?= $data['user']->gender === 'Active' ? 'selected' : '' ?> >Active</option>
-                <option value="Inactive" <?= $data['user']->gender === 'Inactive' ? 'selected' : '' ?> >Inactive</option>
+                <option value="active" <?= $data['user']->gender === 'active' ? 'selected' : '' ?> >Active</option>
+                <option value="inactive" <?= $data['user']->gender === 'inactive' ? 'selected' : '' ?> >Inactive</option>
             </select>
             <div class="invalid-feedback" id="invalid-status">
                 <?= $data['errors']['status'] ?? '' ?>
