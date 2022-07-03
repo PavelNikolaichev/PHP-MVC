@@ -37,6 +37,14 @@ $router->post('/delete', function ($params) use ($serviceProvider) {
     return $serviceProvider->make(UserController::class)->delete($params);
 });
 
+$router->get('/file-upload', function ($params) use ($serviceProvider) {
+    return $serviceProvider->make(\App\controllers\FileUploadController::class)->index($params);
+});
+
+$router->post('/file-upload', function ($params) use ($serviceProvider) {
+    return $serviceProvider->make(\App\controllers\FileUploadController::class)->upload($params);
+});
+
 $router->addNotFoundRoute(function () {
     return (new HTMLResponse(['404 Not Found'], '<p>404 Not Found</p>'));
 });

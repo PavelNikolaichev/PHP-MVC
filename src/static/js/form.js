@@ -1,4 +1,4 @@
-function tableUpdate(user) {
+function userTableUpdate(user) {
     let row = '<tr>';
 
     row += '<th scope="row" id="user-' + user['id'] + '">' + user['id'] + '</th>' +
@@ -41,6 +41,27 @@ function tableDelete(id) {
     $('#user-' + id).parent().remove();
 }
 
+function validateSize(file) {
+    if (file.files[0].size > 1000000) {
+        alert('File size must be less than 1MB');
+        return false;
+    }
+
+    return true;
+}
+
+function updateFileTable(file) {
+    let row = '<tr>';
+
+    row += '<th scope="row">' + file['size'] + '</th>' +
+        '<th>' + file['name'] + '</th>' +
+        '<th>' + file['meta'] + '</th>';
+
+    row += '</tr>';
+
+    $('#files').append(row);
+}
+
 $(document).ready(function () {
     $('#userForm').submit(function (event) {
         event.preventDefault();
@@ -71,11 +92,11 @@ $(document).ready(function () {
                     })
                 } else {
                     let users = res['user'];
-                    tableUpdate(users);
+                    userTableUpdate(users);
                 }
             }
         })
-    })
+    });
 
     $('.form-delete').submit(function (event) {
         event.preventDefault();
@@ -100,5 +121,42 @@ $(document).ready(function () {
                 }
             })
         }
-    })
+    });
+
+    $('#attachedFile').change(function (event) {
+        if (!validateSize(this)) {
+            alert('File size must be less than 1MB');
+            $('#attachedFile').val(null);
+
+            $('#attachedFileLabel').text('Choose file');
+        } else {
+            let file = event.target.files[0].name;
+            $('#attachedFileLabel').text(file);
+        }
+    });
+
+    $('#fileForm').submit(function (event) {
+        event.preventDefault();
+
+        $.ajax({
+            type: $(this).attr('method'),
+            url: $(this).attr('action'),
+            data: new FormData(this),
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function (result) {
+                let res = JSON.parse(result);
+
+                if (res['message']) {
+                    alert(res['message']);
+                }
+                console.log(res['file'])
+
+                updateFileTable(res['file']);
+                $('#attachedFile').val(null);
+                $('#attachedFileLabel').text('Choose file');
+            }
+        })
+    });
 })
