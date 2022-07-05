@@ -54,8 +54,8 @@ class UserModel extends Model
     {
         if (empty($this->name)) {
             $this->addError('name', 'Name cannot be empty.');
-        } elseif (!preg_match('/^[a-zA-Z\d]{4,16}$/', $this->name)) {
-            $this->addError('name', 'Name must be 4-16 chars long and contain letters or numbers.');
+        } elseif (!preg_match("/^([a-zA-Z\d' ]+) ([a-zA-Z\d' ]+)$/", $this->name)) {
+            $this->addError('name', 'Name must contain letters or numbers with space.');
         }
     }
 
@@ -81,8 +81,8 @@ class UserModel extends Model
     private function validateGender(): void
     {
         $genders = [
-            'Male',
-            'Female',
+            'male',
+            'female',
         ];
 
         if (!in_array($this->gender, $genders)) {
@@ -98,12 +98,12 @@ class UserModel extends Model
     private function validateStatus(): void
     {
         $statuses = [
-            'Active',
-            'Inactive',
+            'active',
+            'inactive',
         ];
 
         if (!in_array($this->status, $statuses)) {
-            $this->addError('status', 'Status should be either Active or Inactive.');
+            $this->addError('status', 'Status should be either active or inactive.');
         }
     }
 

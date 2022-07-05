@@ -28,8 +28,8 @@
             <label class="input-group-text" for="inputGender">Gender</label>
         </div>
         <select class="custom-select <?= isset($data['errors']['gender']) ? 'is-invalid' : '' ?>" id="inputGender" name="gender">
-            <option value="Male" selected>Male</option>
-            <option value="Female">Female</option>
+            <option value="male" selected>Male</option>
+            <option value="female">Female</option>
         </select>
         <div class="invalid-feedback" id="invalid-gender">
             <?= $data['errors']['gender'] ?? '' ?>
@@ -40,8 +40,8 @@
             <label class="input-group-text" for="inputStatus">Status</label>
         </div>
         <select class="custom-select <?= isset($data['errors']['status']) ? 'is-invalid' : '' ?>" id="inputStatus" name="status">
-            <option value="Active" selected>Active</option>
-            <option value="Inactive">Inactive</option>
+            <option value="active" selected>Active</option>
+            <option value="inactive">Inactive</option>
         </select>
         <div class="invalid-feedback" id="invalid-status">
             <?= $data['errors']['status'] ?? '' ?>
