@@ -33,7 +33,7 @@ class ServiceProvider
             UserController::class => function (string $class, ServiceProvider $serviceProvider) {
                 return new $class(
                     $serviceProvider->make(IRepository::class),
-                    $serviceProvider->make(View::class)
+                    $serviceProvider->make(IView::class)
                 );
             },
             QueryBuilder::class => function (string $class, ServiceProvider $serviceProvider) {
@@ -45,6 +45,9 @@ class ServiceProvider
                 return new RESTRepository(
                     $serviceProvider->make(CurlManager::class)
                 );
+            },
+            IView::class => function (string $class, ServiceProvider $serviceProvider) {
+                return new TwigView();
             },
             'ConnectDb' => function () {
                 return new Database();

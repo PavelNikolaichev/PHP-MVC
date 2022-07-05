@@ -6,7 +6,6 @@ use App\Core\Controller;
 use App\core\Responses\HTMLResponse;
 use App\core\Responses\IResponse;
 use App\core\Responses\JSONResponse;
-use JetBrains\PhpStorm\ArrayShape;
 
 class FileUploadController extends Controller
 {
@@ -83,7 +82,7 @@ class FileUploadController extends Controller
      * @param string $fileName
      * @return array
      */
-    #[ArrayShape(['name' => "string", 'size' => "mixed", 'meta' => "string"])] private function getFileData(string $fileName): array
+    private function getFileData(string $fileName): array
     {
         $fileExt = explode('.', $fileName);
         $fileExt = strtolower(end($fileExt));
@@ -99,7 +98,7 @@ class FileUploadController extends Controller
 
         return [
             'name' => $fileName,
-            'size' => filesize('../uploads/' . $fileName),
+            'size' => number_format(filesize('../uploads/' . $fileName) / 1048576, 2) . ' MB',
             'meta' => $fileMeta ?? '',
         ];
     }
