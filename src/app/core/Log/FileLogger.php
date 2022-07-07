@@ -18,7 +18,7 @@ class FileLogger extends AbstractLogger
 
     private function chooseLogFile(): string
     {
-        return __DIR__ . '../../../../logs/upload_' . date('dmY') .'log';
+        return __DIR__ . $_ENV['LOG_PATH'] . 'upload_' . date('dmY') .'log';
     }
 
     private function interpolate($message, array $context = array()): string

@@ -26,13 +26,35 @@ class FileModel extends Model
         return in_array($this->extension, $allowedTypes);
     }
 
-    public function readable(): array
+    /**
+     * @return array
+     */
+    public function toReadable(): array
     {
         return [
             'name' => $this->name,
             'extension' => $this->extension,
             'meta' => $this->meta,
-            'size' => number_format($this->size / 1048576, 2) . ' MB',
+            'size' => $this->readableSize(),
         ];
+    }
+
+    public function readableSize(): string
+    {
+        return number_format($this->size / 1048576, 2) . ' MB';
+    }
+
+    public static function createFromFile(mixed $file): FileModel
+    {
+        $fileExt = pathinfo($file['name'], PATHINFO_EXTENSION);
+
+        if ($fileExt !== 'txt') {
+            $fileMeta = getimagesize($file['tmp_name']);
+        }
+
+        $fileMeta = isset($fileMeta) ? $fileMeta[3] : '';
+        $fileSize = $file['size'];
+
+        return new FileModel($file['tmp_name'], $fileExt, $fileMeta, $fileSize);
     }
 }

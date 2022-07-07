@@ -58,7 +58,7 @@ class RESTRepository implements IRepository
      *
      * @return Model
      */
-    final public function save(Model $model): Model
+    final public function save(Model $model): Model|null
     {
         $data = (null === $model->id)
             ? $this->curl->post($this->url . 'users', json_encode(get_object_vars($model)))
@@ -74,6 +74,6 @@ class RESTRepository implements IRepository
      */
     final public function delete(int $id): void
     {
-        $this->curl->delete($this->url . 'users/' . $id);;
+        $this->curl->delete($this->url . 'users/' . $id);
     }
 }

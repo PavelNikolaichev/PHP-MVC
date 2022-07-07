@@ -8,6 +8,6 @@ interface IRepository
 {
     public function fetchAll(): array;
     public function fetch(int $id): Model|null;
-    public function save(Model $model): Model;
+    public function save(Model $model): Model|null;
     public function delete(int $id): void;
 }

@@ -10,12 +10,12 @@ use App\models\FileModel;
 
 class FileUploadController extends Controller
 {
-    public function index(array $params = []): IResponse
+    public function index(): IResponse
     {
         $files = [];
 
         foreach ($this->model->fetchAll() as $file) {
-            $files[] = $file->readable();
+            $files[] = $file->toReadable();
         }
 
         $data = [
@@ -27,16 +27,16 @@ class FileUploadController extends Controller
         return new HTMLResponse(['200 OK'], $body);
     }
 
-    public function upload(array $params = []): IResponse
+    public function upload(): IResponse
     {
         $data = [];
 
-        if (!isset($_POST)) {
+        if (!isset($_FILES['file'])) {
             return new JSONResponse([400], ['error' => 'No files were uploaded.']);
         }
 
         $file = $_FILES['file'];
-        $model = $this->getFileData($file);
+        $model = FileModel::createFromFile($file);
 
 
         if ($file['error'] !== 0) {
@@ -44,23 +44,8 @@ class FileUploadController extends Controller
             return new JSONResponse(['200 OK'], $data);
         }
 
-        $data['file'] = $this->model->save($model)->readable();
+        $data['file'] = $this->model->save($model)->toReadable();
 
         return new JSONResponse(['200 OK'], $data);
-    }
-
-    private function getFileData(mixed $file)
-    {
-        $fileName = explode('.', $file['name']);
-        $fileExt = strtolower(end($fileName));
-
-        if ($fileExt !== 'txt') {
-            $fileMeta = getimagesize($file['tmp_name']);
-        }
-
-        $fileMeta = isset($fileMeta) ? $fileMeta[3] : '';
-        $fileSize = $file['size'];
-
-        return new FileModel($file['tmp_name'], $fileExt, $fileMeta, $fileSize);
     }
 }
