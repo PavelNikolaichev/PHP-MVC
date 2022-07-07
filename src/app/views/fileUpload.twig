@@ -26,9 +26,9 @@
         <tbody>
         {% for file in files %}
             <tr>
-                <th scope="row">{{ file['size'] }}</th>
-                <th>{{ file['name'] }}</th>
-                <th>{{ file['meta'] }}</th>
+                <th scope="row">{{ file.size }}</th>
+                <th>{{ file.name }}.{{ file.extension }}</th>
+                <th>{{ file.meta }}</th>
             </tr>
         {% endfor %}
         </tbody>

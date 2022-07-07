@@ -54,7 +54,7 @@ function updateFileTable(file) {
     let row = '<tr>';
 
     row += '<th scope="row">' + file['size'] + '</th>' +
-        '<th>' + file['name'] + '</th>' +
+        '<th>' + file['name'] + '.' + file['extension'] +'</th>' +
         '<th>' + file['meta'] + '</th>';
 
     row += '</tr>';
@@ -138,6 +138,13 @@ $(document).ready(function () {
     $('#fileForm').submit(function (event) {
         event.preventDefault();
 
+        let file = $('#attachedFile').val();
+
+        if (file == null || file === '') {
+            alert('Please choose a file');
+            return;
+        }
+
         $.ajax({
             type: $(this).attr('method'),
             url: $(this).attr('action'),
@@ -151,7 +158,6 @@ $(document).ready(function () {
                 if (res['message']) {
                     alert(res['message']);
                 }
-                console.log(res['file'])
 
                 updateFileTable(res['file']);
                 $('#attachedFile').val(null);

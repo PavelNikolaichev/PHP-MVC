@@ -6,14 +6,22 @@ use App\Core\Controller;
 use App\core\Responses\HTMLResponse;
 use App\core\Responses\IResponse;
 use App\core\Responses\JSONResponse;
+use App\models\FileModel;
 
 class FileUploadController extends Controller
 {
     public function index(array $params = []): IResponse
     {
+        $files = [];
+
+        foreach ($this->model->fetchAll() as $file) {
+            $files[] = $file->readable();
+        }
+
         $data = [
-            'files' => $this->getFiles(),
+            'files' => $files,
         ];
+
         $body = $this->view->render('fileUpload', $data);
 
         return new HTMLResponse(['200 OK'], $body);
@@ -23,83 +31,36 @@ class FileUploadController extends Controller
     {
         $data = [];
 
-        if (isset($_POST)) {
-            $file = $_FILES['file'];
-
-            $fileExt = explode('.', $file['name']);
-            $fileExt = strtolower(end($fileExt));
-
-            $allowedTypes = ['txt', 'jpg', 'jpeg', 'png'];
-
-            if (in_array($fileExt, $allowedTypes)) {
-                if ($file['error'] === 0) {
-                    if (disk_free_space(__DIR__) <= filesize($file['tmp_name'])) {
-                        $data['error'] = 'Not enough space on disk';
-                    }
-
-                    $fileName = uniqid() . '.' . $fileExt;
-
-                    if (!file_exists('../uploads/')) {
-                        mkdir('../uploads/');
-                    }
-
-                    $filePath = __DIR__ . '/../../uploads/' . $fileName;
-
-                    if (move_uploaded_file($file['tmp_name'], $filePath)) {
-                        $data['file'] = $this->getFileData($fileName);
-                    } else {
-                        $data['error'] = 'Could not move the file into the uploads.';
-                    }
-                } else {
-                    $data['error'] =  'File upload error.';
-                }
-            } else {
-                $data['error'] =  'File extension is not allowed.';
-            }
+        if (!isset($_POST)) {
+            return new JSONResponse([400], ['error' => 'No files were uploaded.']);
         }
+
+        $file = $_FILES['file'];
+        $model = $this->getFileData($file);
+
+
+        if ($file['error'] !== 0) {
+            $data['message'] = 'Uploaded file contains errors: ' . print_r($file['error'], true) . '.';
+            return new JSONResponse(['200 OK'], $data);
+        }
+
+        $data['file'] = $this->model->save($model)->readable();
 
         return new JSONResponse(['200 OK'], $data);
     }
 
-    private function getFiles(): array
+    private function getFileData(mixed $file)
     {
-        $files = [];
-        $files_exif = [];
+        $fileName = explode('.', $file['name']);
+        $fileExt = strtolower(end($fileName));
 
-        if (file_exists('../uploads/')) {
-            $files = scandir('../uploads/');
-            $files = array_slice($files, 2);
+        if ($fileExt !== 'txt') {
+            $fileMeta = getimagesize($file['tmp_name']);
         }
 
-        foreach ($files as $file) {
-            $files_exif[] = $this->getFileData($file);
-        }
+        $fileMeta = isset($fileMeta) ? $fileMeta[3] : '';
+        $fileSize = $file['size'];
 
-        return $files_exif;
-    }
-
-    /**
-     * @param string $fileName
-     * @return array
-     */
-    private function getFileData(string $fileName): array
-    {
-        $fileExt = explode('.', $fileName);
-        $fileExt = strtolower(end($fileExt));
-
-        $allowedTypes = ['jpg', 'jpeg', 'png'];
-
-        if (in_array($fileExt, $allowedTypes)) {
-            $fileMeta = getimagesize('../uploads/' . $fileName);
-            $fileMeta = $fileMeta ? $fileMeta[3] : '';
-        } else {
-            $fileMeta = '';
-        }
-
-        return [
-            'name' => $fileName,
-            'size' => number_format(filesize('../uploads/' . $fileName) / 1048576, 2) . ' MB',
-            'meta' => $fileMeta ?? '',
-        ];
+        return new FileModel($file['tmp_name'], $fileExt, $fileMeta, $fileSize);
     }
 }
