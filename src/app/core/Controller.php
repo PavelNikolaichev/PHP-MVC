@@ -12,12 +12,12 @@ class Controller
      * @var View  - View object.
      */
     public IRepository $model;
-    public View $view;
+    public IView $view;
 
     /**
      * Constructor for Controller.
      */
-    public function __construct(IRepository $model, View $view)
+    public function __construct(IRepository $model, IView $view)
     {
         $this->model = $model;
         $this->view = $view;

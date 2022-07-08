@@ -1,7 +1,9 @@
 {
     "name": "root/html",
     "require": {
-        "vlucas/phpdotenv": "^5.4"
+        "vlucas/phpdotenv": "^5.4",
+        "twig/twig": "^3.0",
+        "psr/log": "^3.0"
     },
     "autoload": {
         "psr-4": {

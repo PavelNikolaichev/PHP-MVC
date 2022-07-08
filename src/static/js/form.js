@@ -1,4 +1,4 @@
-function tableUpdate(user) {
+function userTableUpdate(user) {
     let row = '<tr>';
 
     row += '<th scope="row" id="user-' + user['id'] + '">' + user['id'] + '</th>' +
@@ -41,6 +41,40 @@ function tableDelete(id) {
     $('#user-' + id).parent().remove();
 }
 
+function validateSize(file) {
+    if (file.files[0].size > 1000000) {
+        return false;
+    }
+
+    return true;
+}
+
+function updateFileTable(file) {
+    let files = $('#files');
+    if (files.length === 0) {
+        $('#content-empty').remove();
+        files = $('<table class="table table-striped table-hover" id="files">' +
+            '<thead class="thead-dark">' +
+            '<tr>' +
+            '<th scope="col">Size</th>' +
+            '<th scope="col">Name</th>' +
+            '<th scope="col">Meta</th>' +
+            '</tr>' +
+            '</thead><tbody></tbody>' +
+            '</table>');
+        $('#files-container').append(files);
+    }
+    let row = '<tr>';
+
+    row += '<th scope="row">' + file['size'] + '</th>' +
+        '<th>' + file['name'] + '.' + file['extension'] +'</th>' +
+        '<th>' + file['meta'] + '</th>';
+
+    row += '</tr>';
+
+    files.append(row);
+}
+
 $(document).ready(function () {
     $('#userForm').submit(function (event) {
         event.preventDefault();
@@ -71,11 +105,11 @@ $(document).ready(function () {
                     })
                 } else {
                     let users = res['user'];
-                    tableUpdate(users);
+                    userTableUpdate(users);
                 }
             }
         })
-    })
+    });
 
     $('.form-delete').submit(function (event) {
         event.preventDefault();
@@ -100,5 +134,51 @@ $(document).ready(function () {
                 }
             })
         }
-    })
+    });
+
+    $('#attachedFile').change(function (event) {
+        if (!validateSize(this)) {
+            alert('File size must be less than 1MB');
+            $('#attachedFile').val(null);
+
+            $('#attachedFileLabel').text('Choose file');
+        } else {
+            let file = event.target.files[0].name;
+            $('#attachedFileLabel').text(file);
+        }
+    });
+
+    $('#fileForm').submit(function (event) {
+        event.preventDefault();
+
+        let file = $('#attachedFile').val();
+
+        if (file == null || file === '') {
+            alert('Please choose a file');
+            return;
+        }
+
+        $.ajax({
+            type: $(this).attr('method'),
+            url: $(this).attr('action'),
+            data: new FormData(this),
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function (result) {
+                let res = JSON.parse(result);
+
+                if (res['message']) {
+                    alert(res['message']);
+                    $('#attachedFile').val(null);
+                    $('#attachedFileLabel').text('Choose file');
+                    return;
+                }
+
+                updateFileTable(res['file']);
+                $('#attachedFile').val(null);
+                $('#attachedFileLabel').text('Choose file');
+            }
+        })
+    });
 })

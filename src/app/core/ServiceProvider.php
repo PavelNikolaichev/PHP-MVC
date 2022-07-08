@@ -2,11 +2,15 @@
 
 namespace App\Core;
 
+use App\controllers\FileUploadController;
 use App\controllers\UserController;
 use App\Core\Database\Database;
+use App\core\Database\FileRepository;
 use App\core\Database\IRepository;
 use App\Core\Database\RESTRepository;
+use App\core\Log\FileLogger;
 use ReflectionClass;
+use ReflectionException;
 
 class ServiceProvider
 {
@@ -26,6 +30,8 @@ class ServiceProvider
      * Bootstraps the application.
      *
      * @return void
+     * @noinspection PhpUnusedParameterInspection
+     * @noinspection PhpUnusedParameterInspection
      */
     private function bootstrap(): void
     {
@@ -33,7 +39,7 @@ class ServiceProvider
             UserController::class => function (string $class, ServiceProvider $serviceProvider) {
                 return new $class(
                     $serviceProvider->make(IRepository::class),
-                    $serviceProvider->make(View::class)
+                    $serviceProvider->make(IView::class)
                 );
             },
             QueryBuilder::class => function (string $class, ServiceProvider $serviceProvider) {
@@ -45,6 +51,20 @@ class ServiceProvider
                 return new RESTRepository(
                     $serviceProvider->make(CurlManager::class)
                 );
+            },
+            FileUploadController::class => function (string $class, ServiceProvider $serviceProvider) {
+                return new $class(
+                    $serviceProvider->make(FileRepository::class),
+                    $serviceProvider->make(IView::class),
+                );
+            },
+            FileRepository::class => function (string $class, ServiceProvider $serviceProvider) {
+                return new $class(
+                    $serviceProvider->make(FileLogger::class)
+                );
+            },
+            IView::class => function (string $class, ServiceProvider $serviceProvider) {
+                return new TwigView();
             },
             'ConnectDb' => function () {
                 return new Database();
@@ -62,7 +82,7 @@ class ServiceProvider
      * @param string $class - name of the class.
      *
      * @return mixed - instance of the class.
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     final public function make(string $class): mixed
     {
@@ -86,10 +106,10 @@ class ServiceProvider
     /**
      * Method to make an instance of a class through reflection.
      * @param string $class - name of the class.
-     * @return mixed - instance of the class.
-     * @throws \ReflectionException - if class does not exist.
+     * @return object|null - instance of the class.
+     * @throws ReflectionException - if class does not exist.
      */
-    final public function makeThroughReflection(string $class): mixed
+    final public function makeThroughReflection(string $class): ?object
     {
         $reflection = new ReflectionClass($class);
 
