@@ -14,7 +14,7 @@ class FileModel extends Model
     public function __construct(string $name, string $extension, string $meta, int $size)
     {
         $this->name = $name;
-        $this->extension = $extension;
+        $this->extension = strtolower($extension);
         $this->meta = $meta;
         $this->size = $size;
     }
@@ -48,7 +48,7 @@ class FileModel extends Model
     {
         $fileExt = pathinfo($file['name'], PATHINFO_EXTENSION);
 
-        if ($fileExt !== 'txt') {
+        if (in_array($fileExt, ['jpg', 'jpeg', 'png'])) {
             $fileMeta = getimagesize($file['tmp_name']);
         }
 

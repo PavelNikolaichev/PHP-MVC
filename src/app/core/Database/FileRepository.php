@@ -75,8 +75,9 @@ class FileRepository implements IRepository
 
     public function save(FileModel|Model $model): FileModel|null
     {
-        $this->logger->info('Uploading file [{name}][{size}]', [
+        $this->logger->info('Uploading file [{name}{extension}][{size}]', [
             'name' => $model->name,
+            'extension' => $model->extension,
             'size' => $model->readableSize()
         ]);
 
@@ -101,8 +102,9 @@ class FileRepository implements IRepository
 
             $savedModel = $this->getFileData($fileName);
 
-            $this->logger->info('File uploaded successfully. [{name}][{size}]', [
-                'name'=>$savedModel,
+            $this->logger->info('File uploaded successfully. [{name}{extension}][{size}]', [
+                'name'=>$savedModel->name,
+                'extension'=>$savedModel->extension,
                 'size'=>$savedModel->readableSize()
             ]);
         } catch (RuntimeException $e) {

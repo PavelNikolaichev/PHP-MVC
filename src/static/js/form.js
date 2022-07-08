@@ -43,7 +43,6 @@ function tableDelete(id) {
 
 function validateSize(file) {
     if (file.files[0].size > 1000000) {
-        alert('File size must be less than 1MB');
         return false;
     }
 
@@ -51,6 +50,20 @@ function validateSize(file) {
 }
 
 function updateFileTable(file) {
+    let files = $('#files');
+    if (files.length === 0) {
+        $('#content-empty').remove();
+        files = $('<table class="table table-striped table-hover" id="files">' +
+            '<thead class="thead-dark">' +
+            '<tr>' +
+            '<th scope="col">Size</th>' +
+            '<th scope="col">Name</th>' +
+            '<th scope="col">Meta</th>' +
+            '</tr>' +
+            '</thead><tbody></tbody>' +
+            '</table>');
+        $('#files-container').append(files);
+    }
     let row = '<tr>';
 
     row += '<th scope="row">' + file['size'] + '</th>' +
@@ -59,7 +72,7 @@ function updateFileTable(file) {
 
     row += '</tr>';
 
-    $('#files').append(row);
+    files.append(row);
 }
 
 $(document).ready(function () {
@@ -157,6 +170,9 @@ $(document).ready(function () {
 
                 if (res['message']) {
                     alert(res['message']);
+                    $('#attachedFile').val(null);
+                    $('#attachedFileLabel').text('Choose file');
+                    return;
                 }
 
                 updateFileTable(res['file']);

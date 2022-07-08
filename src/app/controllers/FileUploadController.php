@@ -32,11 +32,15 @@ class FileUploadController extends Controller
         $data = [];
 
         if (!isset($_FILES['file'])) {
-            return new JSONResponse([400], ['error' => 'No files were uploaded.']);
+            return new JSONResponse([400], ['message' => 'No files were uploaded.']);
         }
 
         $file = $_FILES['file'];
         $model = FileModel::createFromFile($file);
+
+        if (!$model->isAllowed()) {
+            return new JSONResponse([400], ['message' => 'File type not allowed.']);
+        }
 
 
         if ($file['error'] !== 0) {
