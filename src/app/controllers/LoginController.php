@@ -57,6 +57,6 @@ class LoginController extends Controller
             session_destroy();
         }
 
-        return new HTMLResponse(['200 OK Location:/login'], $this->view->render('login', []));
+        return new HTMLResponse(['Location:/login'], $this->view->render('login', []));
     }
 }

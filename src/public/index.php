@@ -64,5 +64,5 @@ $router->addNotFoundRoute(function () {
 
 /* @var IResponse $response */
 $response = $router->run();
-header(implode($response->getHeaders()));
+header(implode(';', $response->getHeaders()));
 echo $response->getBody();
