@@ -28,6 +28,9 @@ $router->get('/login', function ($params) use ($serviceProvider) {
 $router->post('/login', function ($params) use ($serviceProvider) {
     return $serviceProvider->make(LoginController::class)->loginPost($params);
 });
+$router->post('/logout', function ($params) use ($serviceProvider) {
+    return $serviceProvider->make(LoginController::class)->logoutPost($params);
+});
 
 $router->get('/user', function ($params) use ($serviceProvider) {
     return $serviceProvider->make(UserController::class)->user($params);

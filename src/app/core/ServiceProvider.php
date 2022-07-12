@@ -8,6 +8,7 @@ use App\controllers\UserController;
 use App\Core\Database\Database;
 use App\core\Database\FileRepository;
 use App\core\Database\IRepository;
+use App\core\Database\LoginRepository;
 use App\Core\Database\RESTRepository;
 use App\core\Log\FileLogger;
 use ReflectionClass;
@@ -61,7 +62,7 @@ class ServiceProvider
             },
             LoginController::class => function (string $class, ServiceProvider $serviceProvider) {
                 return new $class(
-                    $serviceProvider->make(IRepository::class),
+                    $serviceProvider->make(LoginRepository::class),
                     $serviceProvider->make(IView::class),
                 );
             },

@@ -49,8 +49,8 @@ class LoginModel extends Model
     {
         if (empty($this->name)) {
             $this->addError('name', 'Name cannot be empty.');
-        } elseif (!preg_match("/^([a-zA-Z\d' ]+) ([a-zA-Z\d' ]+)$/", $this->name)) {
-            $this->addError('name', 'Name must contain letters or numbers with space.');
+        } elseif (!preg_match("/^([a-zA-Z\d' ]+)$/", $this->name)) {
+            $this->addError('name', 'Name must contain letters or numbers without spaces.');
         }
     }
 

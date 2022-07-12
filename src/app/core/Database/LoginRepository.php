@@ -4,6 +4,7 @@ namespace App\core\Database;
 
 use App\Core\Model;
 use App\models\LoginModel;
+use InvalidArgumentException;
 
 class LoginRepository implements IRepository
 {
@@ -18,20 +19,31 @@ class LoginRepository implements IRepository
         ],
     ];
 
+    public function __construct()
+    {
+        foreach ($this->users as $email => $user) {
+            $this->users[$email]['password'] = password_hash($user['password'], PASSWORD_DEFAULT);
+        }
+    }
+
     public function fetchAll(): array
     {
         $users = [];
 
-        foreach ($this->users as $user) {
-            $users[] = new LoginModel(...$user);
+        foreach ($this->users as $email => $user) {
+            $users[] = new LoginModel($email, ...$user);
         }
 
         return $this->users;
     }
 
-    public function fetch(int $id): Model|null
+    public function fetch(mixed $id): Model|null
     {
-        return new LoginModel(...$this->users[$id]) ?? null;
+        if (!is_string($id)) {
+            throw new InvalidArgumentException('Fetch should have a string-class variable as input.');
+        }
+
+        return new LoginModel($id, ...$this->users[$id]) ?? null;
     }
 
     public function save(Model $model): Model|null

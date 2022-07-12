@@ -1,23 +1,28 @@
 {% extends 'base.twig' %}
 
 {% block body %}
+    {% if errors %}
+        <p>Login is incorrect!</p>
+
+        {% for error in errors %}
+        <p>{{ error }}</p>
+        {% endfor %}
+    {% endif %}
+
     <h1>Login</h1>
     {% if user is not defined %}
-        <form>
+        <form action="/login" method="post">
             <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
             <label for="inputEmail" class="sr-only">Email address</label>
-            <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required="" autofocus="" autocomplete="off">
+            <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required="" autofocus="" autocomplete="off" name="email">
+            <label for="inputEmail" class="sr-only">Name</label>
+            <input type="text" id="inputUsername" class="form-control" placeholder="Username" required="" autofocus="" autocomplete="off" name="username">
             <label for="inputPassword" class="sr-only">Password</label>
-            <input type="password" id="inputPassword" class="form-control" placeholder="Password" required="">
-            <div class="checkbox mb-3">
-                <label>
-                    <input type="checkbox" value="remember-me"> Remember me
-                </label>
-            </div>
+            <input type="password" id="inputPassword" class="form-control" placeholder="Password" required="" name="password">
             <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-            <p class="mt-5 mb-3 text-muted">© 2017-2018</p>
         </form>
     {% else %}
+        <p>Welcome back, {{ user['name'] }}!</p>
         <form action="/logout" method="post">
             <button type="submit" class="btn btn-primary">Logout</button>
     {% endif %}

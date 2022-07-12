@@ -5,6 +5,7 @@ namespace App\Core\Database;
 use App\Core\Model;
 use App\Core\QueryBuilder;
 use App\Models\UserModel;
+use InvalidArgumentException;
 
 class UserRepository implements IRepository
 {
@@ -43,8 +44,12 @@ class UserRepository implements IRepository
      *
      * @return UserModel|null - an array of user fields.
      */
-    final public function fetch(int $id): UserModel|null
+    final public function fetch(mixed $id): UserModel|null
     {
+        if (!is_int($id)) {
+            throw new InvalidArgumentException('Fetch should have an int-class variable as input.');
+        }
+
         $data = $this->queryBuilder
             ->fetch('users')
             ->select(['id', 'email', 'name', 'gender', 'status'])
