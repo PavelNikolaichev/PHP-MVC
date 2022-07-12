@@ -26,6 +26,13 @@ class LoginController extends Controller
     {
         $data = [];
 
+        if (!isset($params['email'], $params['username'], $params['password'])) {
+            $data['error'] = 'Please fill in all fields';
+            $body = $this->view->render('login', $data);
+
+            return new HTMLResponse(['200 OK'], $body);
+        }
+
         $model = new LoginModel($params['email'], $params['username'], $params['password']);
 
         $data['errors'] = $model->validate();
@@ -36,19 +43,27 @@ class LoginController extends Controller
 
         $foundedUser = $this->model->fetch($model->email);
 
-        if ($foundedUser !== null) {
-            if ($foundedUser->name === $model->name && password_verify($model->password, $foundedUser->password)) {
-                $_SESSION['email'] = $model->email;
-                $_SESSION['user'] = $model->name;
-                $data['user'] = ['email' => $model->email, 'name' => $model->name];
-            } else {
-                $data['errors']['password'] = 'Wrong password.';
-            }
+        if ($foundedUser === null) {
+            $data['error'] = 'User not found';
+            $body = $this->view->render('login', $data);
+
+            return new HTMLResponse(['400 Bad Request'], $body);
         }
+
+        if (!($foundedUser->name === $model->name && password_verify($model->password, $foundedUser->password))) {
+            $data['error'] = 'Wrong login credentials';
+            $body = $this->view->render('login', $data);
+
+            return new HTMLResponse(['400 Bad Request'], $body);
+        }
+
+        $_SESSION['email'] = $model->email;
+        $_SESSION['user'] = $model->name;
+        $data['user'] = ['email' => $model->email, 'name' => $model->name];
 
         $body = $this->view->render('login', $data);
 
-        return new HTMLResponse([(empty($data['errors'])) ? '200 OK' : '400 Bad Request'], $body);
+        return new HTMLResponse(['200 OK'], $body);
     }
 
     public function logoutPost($params): IResponse

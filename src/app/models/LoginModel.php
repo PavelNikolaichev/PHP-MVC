@@ -25,14 +25,6 @@ class LoginModel extends Model
      */
     final public function validate(): array|null
     {
-        foreach (get_object_vars($this) as $field => $value) {
-            if (null === $value) {
-                trigger_error("$field is empty!");
-
-                return null;
-            }
-        }
-
         $this->validateName();
         $this->validateEmail();
         $this->validatePassword();
@@ -49,7 +41,7 @@ class LoginModel extends Model
     {
         if (empty($this->name)) {
             $this->addError('name', 'Name cannot be empty.');
-        } elseif (!preg_match("/^([a-zA-Z\d' ]+)$/", $this->name)) {
+        } elseif (!preg_match("/^([a-zA-Z\d']+)$/", $this->name)) {
             $this->addError('name', 'Name must contain letters or numbers without spaces.');
         }
     }

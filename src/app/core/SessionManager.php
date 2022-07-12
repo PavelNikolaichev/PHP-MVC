@@ -8,14 +8,10 @@ class SessionManager
     {
         session_start();
 
-        if (isset($_SESSION['user'])) {
-            $this->user = $_SESSION['user'];
-        }
-
-        if (isset($_SESSION['destroyed']) && $_SESSION['destroyed'] <= time() - 300) {
+        if (isset($_SESSION['destroyed']) && $_SESSION['destroyed'] <= time() - 180) {
             session_regenerate_id(true);
         } else if (!isset($_SESSION['destroyed'])) {
-            $_SESSION['destroyed'] = time() + 60 * 3;
+            $_SESSION['destroyed'] = time() + 180;
         }
     }
 }
