@@ -16,7 +16,7 @@ $dotenv->safeLoad();
 $serviceProvider = new ServiceProvider();
 $pdo = $serviceProvider->make('ConnectDb');
 $router = $serviceProvider->make(Router::class);
-$sessionManager = $serviceProvider->make(SessionManager::class);
+$serviceProvider->make(SessionManager::class);
 
 $router->get('/', function ($params) use ($serviceProvider) {
     return $serviceProvider->make(UserController::class)->list($params);

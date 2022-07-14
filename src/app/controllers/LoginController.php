@@ -6,6 +6,9 @@ use App\Core\Controller;
 use App\core\Responses\HTMLResponse;
 use App\core\Responses\IResponse;
 use App\models\LoginModel;
+use ArgumentCountError;
+use Exception;
+use http\Exception\InvalidArgumentException;
 
 class LoginController extends Controller
 {
@@ -25,45 +28,21 @@ class LoginController extends Controller
     public function loginPost($params): IResponse
     {
         $data = [];
+        $headers = ['200 OK'];
 
-        if (!isset($params['email'], $params['username'], $params['password'])) {
-            $data['error'] = 'Please fill in all fields';
-            $body = $this->view->render('login', $data);
+        try {
+            $model = $this->model->login($params['email'], $params['username'], $params['password']);
 
-            return new HTMLResponse(['200 OK'], $body);
+            $_SESSION['email'] = $model->email;
+            $_SESSION['user'] = $model->name;
+            $data['user'] = ['email' => $model->email, 'name' => $model->name];
+        } catch (Exception $e) {
+            $data['errors'][] = $e->getMessage();
+            $headers = ['400 Bad Request'];
         }
-
-        $model = new LoginModel($params['email'], $params['username'], $params['password']);
-
-        $data['errors'] = $model->validate();
-
-        if (!empty($data['errors'])) {
-            return new HTMLResponse(['400 Bad Request'], $this->view->render('login', $data));
-        }
-
-        $foundedUser = $this->model->fetch($model->email);
-
-        if ($foundedUser === null) {
-            $data['error'] = 'User not found';
-            $body = $this->view->render('login', $data);
-
-            return new HTMLResponse(['400 Bad Request'], $body);
-        }
-
-        if (!($foundedUser->name === $model->name && password_verify($model->password, $foundedUser->password))) {
-            $data['error'] = 'Wrong login credentials';
-            $body = $this->view->render('login', $data);
-
-            return new HTMLResponse(['400 Bad Request'], $body);
-        }
-
-        $_SESSION['email'] = $model->email;
-        $_SESSION['user'] = $model->name;
-        $data['user'] = ['email' => $model->email, 'name' => $model->name];
 
         $body = $this->view->render('login', $data);
-
-        return new HTMLResponse(['200 OK'], $body);
+        return new HTMLResponse($headers, $body);
     }
 
     public function logoutPost($params): IResponse

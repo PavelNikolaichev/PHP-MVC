@@ -5,7 +5,7 @@
         <p>Login is incorrect!</p>
 
         {% for error in errors %}
-        <p>{{ error }}</p>
+        <p>{{ error|nl2br }}</p>
         {% endfor %}
     {% endif %}
 

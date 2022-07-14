@@ -8,10 +8,10 @@ class SessionManager
     {
         session_start();
 
-        if (isset($_SESSION['destroyed']) && $_SESSION['destroyed'] <= time() - 180) {
+        if (isset($_SESSION['destroyed']) && $_SESSION['destroyed'] <= time()) {
             session_regenerate_id(true);
         } else if (!isset($_SESSION['destroyed'])) {
-            $_SESSION['destroyed'] = time() + 180;
+            $_SESSION['destroyed'] = time() + 360;
         }
     }
 }

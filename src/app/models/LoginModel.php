@@ -21,9 +21,9 @@ class LoginModel extends Model
     /**
      * Validation of input data.
      *
-     * @return array|null - array of errors.
+     * @return array - array of errors.
      */
-    final public function validate(): array|null
+    final public function validate(): array
     {
         $this->validateName();
         $this->validateEmail();

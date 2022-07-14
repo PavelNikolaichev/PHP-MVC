@@ -42,8 +42,41 @@ class LoginRepository implements IRepository
         if (!is_string($id)) {
             throw new InvalidArgumentException('Fetch should have a string-class variable as input.');
         }
+        if (!isset($this->users[$id])) {
+            return null;
+        }
 
-        return new LoginModel($id, ...$this->users[$id]) ?? null;
+        return new LoginModel($id, ...$this->users[$id]);
+    }
+
+    public function createModel(string $email, string $name, string $password): Model
+    {
+        $model = new LoginModel($email, $name, $password);
+        $data['errors'] = $model->validate();
+
+        if (!empty($data['errors'])) {
+            $readableErrors = [];
+
+            foreach ($data['errors'] as $field => $error) {
+                $readableErrors[] = $field . ': ' . $error;
+            }
+
+            throw new InvalidArgumentException('Invalid parameters: '. PHP_EOL . implode(PHP_EOL, $readableErrors));
+        }
+
+        return $model;
+    }
+
+    public function login(string $email, string $name, string $password): Model
+    {
+        $model = $this->createModel($email, $name, $password);
+
+        $foundedUser = $this->fetch($email);
+        if ($foundedUser === null || !($foundedUser->name === $model->name && password_verify($model->password, $foundedUser->password))) {
+            throw new InvalidArgumentException('Invalid credentials.');
+        }
+
+        return $model;
     }
 
     public function save(Model $model): Model|null
