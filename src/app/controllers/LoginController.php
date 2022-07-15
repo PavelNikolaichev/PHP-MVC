@@ -3,12 +3,11 @@
 namespace App\controllers;
 
 use App\Core\Controller;
+use App\core\LoginForm;
 use App\core\Responses\HTMLResponse;
 use App\core\Responses\IResponse;
-use App\models\LoginModel;
-use ArgumentCountError;
 use Exception;
-use http\Exception\InvalidArgumentException;
+use InvalidArgumentException;
 
 class LoginController extends Controller
 {
@@ -31,7 +30,18 @@ class LoginController extends Controller
         $headers = ['200 OK'];
 
         try {
-            $model = $this->model->login($params['email'], $params['username'], $params['password']);
+            $form = new LoginForm($params['email'], $params['username'], $params['password']);
+
+            // If there will be any errors, the exception will be thrown. Thus, the code below will not be executed.
+            $form->validate();
+
+            $model = $form->getModel();
+
+            $user = $this->model->fetch($params['email']);
+
+            if ($user === null || !($user->name === $model->name && password_verify($model->password, $user->password))) {
+                throw new InvalidArgumentException('Invalid credentials.');
+            }
 
             $_SESSION['email'] = $model->email;
             $_SESSION['user'] = $model->name;
