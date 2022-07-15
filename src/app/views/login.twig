@@ -2,11 +2,13 @@
 
 {% block body %}
     {% if errors %}
-        <p>Login is incorrect!</p>
-
-        {% for error in errors %}
-        <p>{{ error|nl2br }}</p>
-        {% endfor %}
+        <div class="alert alert-danger">
+            <ul>
+                {% for error in errors %}
+                    <li>{{ error|nl2br }}</li>
+                {% endfor %}
+            </ul>
+        </div>
     {% endif %}
 
     <h1>Login</h1>
