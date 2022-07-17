@@ -1,10 +1,12 @@
 <?php
 
+use App\controllers\LoginController;
 use App\controllers\UserController;
 use App\core\Responses\HTMLResponse;
 use App\core\Responses\IResponse;
 use App\Core\Router;
 use App\Core\ServiceProvider;
+use App\core\SessionManager;
 
 require_once '../vendor/autoload.php';
 
@@ -14,9 +16,20 @@ $dotenv->safeLoad();
 $serviceProvider = new ServiceProvider();
 $pdo = $serviceProvider->make('ConnectDb');
 $router = $serviceProvider->make(Router::class);
+$serviceProvider->make(SessionManager::class);
 
 $router->get('/', function ($params) use ($serviceProvider) {
     return $serviceProvider->make(UserController::class)->list($params);
+});
+
+$router->get('/login', function ($params) use ($serviceProvider) {
+    return $serviceProvider->make(LoginController::class)->login($params);
+});
+$router->post('/login', function ($params) use ($serviceProvider) {
+    return $serviceProvider->make(LoginController::class)->loginPost($params);
+});
+$router->post('/logout', function ($params) use ($serviceProvider) {
+    return $serviceProvider->make(LoginController::class)->logoutPost($params);
 });
 
 $router->get('/user', function ($params) use ($serviceProvider) {

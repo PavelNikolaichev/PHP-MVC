@@ -1,0 +1,31 @@
+{% extends 'base.twig' %}
+
+{% block body %}
+    {% if errors %}
+        <div class="alert alert-danger">
+            <ul>
+                {% for error in errors %}
+                    <li>{{ error|nl2br }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <h1>Login</h1>
+    {% if user is not defined %}
+        <form action="/login" method="post">
+            <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+            <label for="inputEmail" class="sr-only">Email address</label>
+            <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required="" autofocus="" autocomplete="off" name="email">
+            <label for="inputEmail" class="sr-only">Name</label>
+            <input type="text" id="inputUsername" class="form-control" placeholder="Username" required="" autofocus="" autocomplete="off" name="username">
+            <label for="inputPassword" class="sr-only">Password</label>
+            <input type="password" id="inputPassword" class="form-control" placeholder="Password" required="" name="password">
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+        </form>
+    {% else %}
+        <p>Welcome back, {{ user['name'] }}!</p>
+        <form action="/logout" method="post">
+            <button type="submit" class="btn btn-primary">Logout</button>
+    {% endif %}
+{% endblock %}

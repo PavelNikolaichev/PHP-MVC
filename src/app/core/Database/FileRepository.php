@@ -5,6 +5,7 @@ namespace App\core\Database;
 use App\core\Model;
 use App\models\FileModel;
 use Exception;
+use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 
@@ -61,8 +62,12 @@ class FileRepository implements IRepository
         return new FileModel($fileName, $fileExt, $fileMeta, $fileSize);
     }
 
-    public function fetch(int $id): FileModel|null
+    public function fetch(mixed $id): FileModel|null
     {
+        if (!is_int($id)) {
+            throw new InvalidArgumentException('Fetch should have an int-class variable as input.');
+        }
+
         $files = [];
 
         if (file_exists(__DIR__ . $_ENV['UPLOAD_PATH'])) {
@@ -75,7 +80,7 @@ class FileRepository implements IRepository
 
     public function save(FileModel|Model $model): FileModel|null
     {
-        $this->logger->info('Uploading file [{name}{extension}][{size}]', [
+        $this->logger->info('Uploading file [{name}.{extension}][{size}]', [
             'name' => $model->name,
             'extension' => $model->extension,
             'size' => $model->readableSize()
@@ -102,7 +107,7 @@ class FileRepository implements IRepository
 
             $savedModel = $this->getFileData($fileName);
 
-            $this->logger->info('File uploaded successfully. [{name}{extension}][{size}]', [
+            $this->logger->info('File uploaded successfully. [{name}.{extension}][{size}]', [
                 'name'=>$savedModel->name,
                 'extension'=>$savedModel->extension,
                 'size'=>$savedModel->readableSize()

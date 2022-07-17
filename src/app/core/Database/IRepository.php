@@ -7,7 +7,7 @@ use App\Core\Model;
 interface IRepository
 {
     public function fetchAll(): array;
-    public function fetch(int $id): Model|null;
+    public function fetch(mixed $id): Model|null;
     public function save(Model $model): Model|null;
     public function delete(int $id): void;
 }

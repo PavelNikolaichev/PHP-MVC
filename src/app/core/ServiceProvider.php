@@ -3,10 +3,12 @@
 namespace App\Core;
 
 use App\controllers\FileUploadController;
+use App\controllers\LoginController;
 use App\controllers\UserController;
 use App\Core\Database\Database;
 use App\core\Database\FileRepository;
 use App\core\Database\IRepository;
+use App\core\Database\LoginRepository;
 use App\Core\Database\RESTRepository;
 use App\core\Log\FileLogger;
 use ReflectionClass;
@@ -58,6 +60,12 @@ class ServiceProvider
                     $serviceProvider->make(IView::class),
                 );
             },
+            LoginController::class => function (string $class, ServiceProvider $serviceProvider) {
+                return new $class(
+                    $serviceProvider->make(LoginRepository::class),
+                    $serviceProvider->make(IView::class),
+                );
+            },
             FileRepository::class => function (string $class, ServiceProvider $serviceProvider) {
                 return new $class(
                     $serviceProvider->make(FileLogger::class)
@@ -73,6 +81,7 @@ class ServiceProvider
 
         $this->singletons = [
             'ConnectDb',
+            SessionManager::class,
         ];
     }
 
