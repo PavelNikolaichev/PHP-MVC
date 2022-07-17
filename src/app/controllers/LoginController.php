@@ -38,6 +38,9 @@ class LoginController extends Controller
             $headers = ['400 Bad Request'];
         }
 
+        $_SESSION['email'] = $model->user->email;
+        $_SESSION['user'] = $model->user->name;
+
         $body = $this->view->render('login', $data);
         return new HTMLResponse($headers, $body);
     }

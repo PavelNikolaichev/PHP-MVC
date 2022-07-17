@@ -1,6 +1,6 @@
 <?php
 
-namespace App\core;
+namespace App\core\Services;
 
 use App\models\LoginModel;
 use Exception;
@@ -12,8 +12,5 @@ class AuthenticateEvent
         if (!($success && $user !== null)) {
             throw new Exception($error);
         }
-
-        $_SESSION['email'] = $user->email;
-        $_SESSION['user'] = $user->name;
     }
 }
