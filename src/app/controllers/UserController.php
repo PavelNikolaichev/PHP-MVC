@@ -21,7 +21,6 @@ class UserController extends Controller
     {
         $data = $this->sendUser($params);
 
-
         return new JSONResponse(['200 OK'], $data);
     }
 

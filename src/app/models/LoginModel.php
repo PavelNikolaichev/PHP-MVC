@@ -15,7 +15,7 @@ class LoginModel extends Model
     {
         $this->email = $email;
         $this->name = $name;
-        $this->password = $password;
+        $this->password = password_hash($password, PASSWORD_DEFAULT);
     }
 
     /**

@@ -9,12 +9,7 @@ use InvalidArgumentException;
 
 class UserRepository implements IRepository
 {
-    private $queryBuilder;
-
-    public function __construct(QueryBuilder $queryBuilder)
-    {
-        $this->queryBuilder = $queryBuilder;
-    }
+    public function __construct(private QueryBuilder $queryBuilder) {}
 
     /**
      * Method to get all users from the database.

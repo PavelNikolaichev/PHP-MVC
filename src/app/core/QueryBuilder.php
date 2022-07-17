@@ -174,12 +174,13 @@ class QueryBuilder
 
     public function insert(array $values): array
     {
+        // TODO: Refactor sql-query generation to make it more safe.
         unset($values['id']);
         $keys = array_keys($values);
 
         $keys = implode(', ', $keys);
 
-        $this->setSql("INSERT INTO $this->table ($keys) VALUES (:name, :email, :gender, :status)");
+        $this->setSql("INSERT INTO $this->table ($keys) VALUES (:" . implode(':', $keys) . ")");
         $this->query($this->sql, $values);
 
         return $this->fetch($this->table)->select(['*'])->where('id', '=', $this->db->lastInsertId())->get()[0];

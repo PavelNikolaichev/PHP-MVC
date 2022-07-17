@@ -3,59 +3,87 @@
 namespace App\core\Database;
 
 use App\Core\Model;
+use App\Core\QueryBuilder;
 use App\models\LoginModel;
 use InvalidArgumentException;
 
 class LoginRepository implements IRepository
 {
-    private array $users = [
-        'user1@test.com' => [
-        'name' => 'John',
-        'password' => 'your_hash_here1',
-        ],
-        'user2@test.com' => [
-        'name' => 'Jane',
-        'password' => 'your_hash_here2',
-        ],
-    ];
-
-    public function __construct()
-    {
-        foreach ($this->users as $email => $user) {
-            $this->users[$email]['password'] = password_hash($user['password'], PASSWORD_DEFAULT);
-        }
-    }
+    public function __construct(private QueryBuilder $queryBuilder) {}
 
     public function fetchAll(): array
     {
+        $records = $this->queryBuilder
+            ->fetch('logins')
+            ->select(['*'])
+            ->get();
+
         $users = [];
 
-        foreach ($this->users as $email => $user) {
-            $users[] = new LoginModel($email, ...$user);
+        foreach ($records as $record) {
+            $users[] = new LoginModel(...$record);
         }
 
-        return $this->users;
+        return $users;
     }
 
     public function fetch(mixed $id): Model|null
     {
-        if (!is_string($id)) {
-            throw new InvalidArgumentException('Fetch should have a string-class variable as input.');
+        if (!is_int($id)) {
+            throw new InvalidArgumentException('Fetch should have an int-class variable as input.');
         }
-        if (!isset($this->users[$id])) {
+
+        $data = $this->queryBuilder
+            ->fetch('logins')
+            ->select(['*'])
+            ->where('id', '=', $id)
+            ->get();
+
+        if (empty($data)) {
             return null;
         }
 
-        return new LoginModel($id, ...$this->users[$id]);
+        return new LoginModel(...$data[0]);
+    }
+
+    public function fetchByField(string $field, string $value): Model|null
+    {
+        $data = $this->queryBuilder
+            ->fetch('logins')
+            ->select(['name', 'email', 'password'])
+            ->where($field, '=', $value)
+            ->get();
+
+        if (empty($data)) {
+            return null;
+        }
+
+        return new LoginModel(...$data[0]);
     }
 
     public function save(Model $model): Model|null
     {
-        // TODO: Implement save() method.
+        if (null === $model->id) {
+            return new LoginModel(...($this->queryBuilder
+                ->fetch('logins')
+                ->insert(get_object_vars($model))));
+        }
+
+        $data = $this->queryBuilder
+            ->fetch('logins')
+            ->update(get_object_vars($model));
+
+        return new LoginModel(...$data);
     }
 
-    public function delete(int $id): void
+
+    /**
+     * Method to delete a user from the database.
+     *
+     * @param int $id - id of the user to be deleted.
+     */
+    final public function delete(int $id): void
     {
-        // TODO: Implement delete() method.
+        $this->queryBuilder->fetch('logins')->delete($id);
     }
 }
