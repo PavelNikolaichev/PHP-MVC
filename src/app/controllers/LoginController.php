@@ -75,7 +75,7 @@ class LoginController extends Controller
 
         try {
             // If there will be any errors, the exception will be thrown. Thus, the code below will not be executed.
-            $model = $this->model->save(new LoginModel($params['email'], $params['password'], $params['name']));
+            $model = $this->model->save(new LoginModel($params['email'], $params['username'], $params['password']));
 
             $data['errors'] = $model->validate();
 

@@ -63,17 +63,20 @@ class LoginRepository implements IRepository
 
     public function save(Model $model): Model|null
     {
-        if (null === $model->id) {
-            return new LoginModel(...($this->queryBuilder
-                ->fetch('logins')
-                ->insert(get_object_vars($model))));
+        if ($model->id !== null) {
+            throw new InvalidArgumentException('Cannot save an existing model.');
         }
 
-        $data = $this->queryBuilder
-            ->fetch('logins')
-            ->update(get_object_vars($model));
+        if (null !== ($this->fetchByField('email', $model->email))) {
+            throw new InvalidArgumentException('This email is already in use.');
+        }
 
-        return new LoginModel(...$data);
+        $saveData = get_object_vars($model);
+        $saveData['password'] = password_hash($saveData['password'], PASSWORD_DEFAULT);
+
+        return new LoginModel(...($this->queryBuilder
+            ->fetch('logins')
+            ->insert($saveData)));
     }
 
 

@@ -9,13 +9,15 @@ class LoginModel extends Model
     public string $name;
     public string $email;
     public string $password;
+    public ?int $id;
     private array $errors = [];
 
-    public function __construct(string $email, string $name, string $password)
+    public function __construct(string $email, string $name, string $password, int $id = null)
     {
         $this->email = $email;
         $this->name = $name;
-        $this->password = password_hash($password, PASSWORD_DEFAULT);
+        $this->password = $password;
+        $this->id = $id;
     }
 
     /**

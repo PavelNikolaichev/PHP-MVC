@@ -119,9 +119,9 @@ class QueryBuilder
         }
         if ($this->isCondition($cond)) {
             return;
-        } else {
-            throw new \Exception('The wrong sign in WHERE');
         }
+
+        throw new \Exception('The wrong sign in WHERE');
     }
 
     private function isCondition(string $code): bool
@@ -180,7 +180,7 @@ class QueryBuilder
 
         $keys = implode(', ', $keys);
 
-        $this->setSql("INSERT INTO $this->table ($keys) VALUES (:" . implode(':', $keys) . ")");
+        $this->setSql("INSERT INTO $this->table ($keys) VALUES (:" . implode(', :', array_keys($values)) . ")");
         $this->query($this->sql, $values);
 
         return $this->fetch($this->table)->select(['*'])->where('id', '=', $this->db->lastInsertId())->get()[0];
