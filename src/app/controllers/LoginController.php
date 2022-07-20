@@ -6,6 +6,7 @@ use App\Core\Controller;
 use App\core\Responses\HTMLResponse;
 use App\core\Responses\IResponse;
 use App\core\Services\AuthenticateService;
+use App\core\Services\RegistrationService;
 use App\models\LoginModel;
 use Exception;
 
@@ -33,10 +34,10 @@ class LoginController extends Controller
             // If there will be any errors, the exception will be thrown. Thus, the code below will not be executed.
             $model = (new AuthenticateService($this->model))->run($params['email'], $params['password']);
 
-            $data['user'] = ['email' => $model->user->email, 'name' => $model->user->name];
-
             $_SESSION['email'] = $model->user->email;
-            $_SESSION['user'] = $model->user->name;
+            $_SESSION['user'] = $model->user->first_name;
+
+            $data['user'] = ['email' => $model->user->email, 'name' => $model->user->first_name];
         } catch (Exception $e) {
             $data['errors'][] = $e->getMessage();
             $headers = ['400 Bad Request'];
@@ -72,21 +73,17 @@ class LoginController extends Controller
     {
         $data = [];
         $headers = ['200 OK'];
+        $serviceParams = [$params['email'], $params['first_name'], $params['last_name'], $params['password'], $params['password_confirmation']];
 
         try {
             // If there will be any errors, the exception will be thrown. Thus, the code below will not be executed.
-            $model = $this->model->save(new LoginModel($params['email'], $params['username'], $params['password']));
-
-            $data['errors'] = $model->validate();
-
-            if (empty($data['errors'])) {
-                $data['user'] = $this->model->save($model);
-            }
+            $model = (new RegistrationService($this->model))->run(...$serviceParams);
 
             $_SESSION['email'] = $model->user->email;
-            $_SESSION['user'] = $model->user->name;
+            $_SESSION['user'] = $model->user->first_name;
 
-            $data['user'] = ['email' => $model->user->email, 'name' => $model->user->name];
+            $data['user'] = ['email' => $model->user->email, 'name' => $model->user->first_name];
+            $headers = ['Location:/login'];
         } catch (Exception $e) {
             $data['errors'][] = $e->getMessage();
             $headers = ['400 Bad Request'];

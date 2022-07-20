@@ -9,9 +9,19 @@ class RegistrationService
 {
     public function __construct(private LoginRepository $repo) {}
 
-    public function run(string $email, string $name, string $pass)
+    public function run(string $email, string $firstName, string $lastName, string $pass, string $confirmPass): RegistrationEvent
     {
-        $model = new LoginModel($email, $name, $pass);
+        if ($pass !== $confirmPass) {
+            return new RegistrationEvent(false, null, 'Passwords do not match.');
+        }
+
+        $model = new LoginModel($email, $firstName, $lastName, $pass);
+
+        $errors = $model->validate();
+
+        if (!empty($errors)) {
+            return new RegistrationEvent(false, null, 'Please check your credentials and try again.' . print_r($errors, true));
+        }
 
         $user = $this->repo->save($model);
 
@@ -19,10 +29,6 @@ class RegistrationService
             return new RegistrationEvent(false, null, 'Error during saving the model. Please try again.');
         }
 
-        return new RegistrationEvent(
-            $isPasswordsMatch, //true false
-            $isPasswordsMatch ? $user : null, //set user if password valid
-            $isPasswordsMatch ? null : 'Invalid credentials.'
-        );
+        return new RegistrationEvent(true, $user, null);
     }
 }

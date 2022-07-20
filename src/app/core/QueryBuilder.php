@@ -174,8 +174,6 @@ class QueryBuilder
 
     public function insert(array $values): array
     {
-        // TODO: Refactor sql-query generation to make it more safe.
-        unset($values['id']);
         $keys = array_keys($values);
 
         $keys = implode(', ', $keys);

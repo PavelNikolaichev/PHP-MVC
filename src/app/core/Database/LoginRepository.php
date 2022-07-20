@@ -27,7 +27,7 @@ class LoginRepository implements IRepository
         return $users;
     }
 
-    public function fetch(mixed $id): Model|null
+    public function fetch(mixed $id): LoginModel|null
     {
         if (!is_int($id)) {
             throw new InvalidArgumentException('Fetch should have an int-class variable as input.');
@@ -46,11 +46,11 @@ class LoginRepository implements IRepository
         return new LoginModel(...$data[0]);
     }
 
-    public function fetchByField(string $field, string $value): Model|null
+    public function fetchByField(string $field, string $value): LoginModel|null
     {
         $data = $this->queryBuilder
             ->fetch('logins')
-            ->select(['name', 'email', 'password'])
+            ->select(['*'])
             ->where($field, '=', $value)
             ->get();
 
@@ -58,10 +58,12 @@ class LoginRepository implements IRepository
             return null;
         }
 
+        unset($data[0]['created_date']);
+
         return new LoginModel(...$data[0]);
     }
 
-    public function save(Model $model): Model|null
+    public function save(Model $model): LoginModel|null
     {
         if ($model->id !== null) {
             throw new InvalidArgumentException('Cannot save an existing model.');
@@ -73,10 +75,15 @@ class LoginRepository implements IRepository
 
         $saveData = get_object_vars($model);
         $saveData['password'] = password_hash($saveData['password'], PASSWORD_DEFAULT);
+        unset($saveData['id']);
 
-        return new LoginModel(...($this->queryBuilder
+        $data = ($this->queryBuilder
             ->fetch('logins')
-            ->insert($saveData)));
+            ->insert($saveData));
+
+        unset($data['created_date']);
+
+        return new LoginModel(...$data);
     }
 
 
