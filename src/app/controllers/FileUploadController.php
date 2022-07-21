@@ -22,6 +22,12 @@ class FileUploadController extends Controller
             'files' => $files,
         ];
 
+        if (isset($_SESSION['email'], $_SESSION['user'])) {
+            $data['user'] = ['email' => $_SESSION['email'], 'name' => $_SESSION['user']];
+        } elseif (isset($_COOKIE['email'], $_COOKIE['user'])) {
+            $data['user'] = ['email' => $_COOKIE['email'], 'name' => $_COOKIE['user']];
+        }
+
         $body = $this->view->render('fileUpload', $data);
 
         return new HTMLResponse(['200 OK'], $body);
@@ -29,6 +35,10 @@ class FileUploadController extends Controller
 
     public function upload(): IResponse
     {
+        if (!isset($_SESSION['user'], $_SESSION['email'], $_COOKIE['email'], $_COOKIE['user'])) {
+            return new JSONResponse([400], ['message' => 'You should sign in to upload files.']);
+        }
+
         $data = [];
 
         if (!isset($_FILES['file'])) {

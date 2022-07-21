@@ -15,8 +15,10 @@ class LoginController extends Controller
     {
         $data = [...$params];
 
-        if ((isset($_SESSION['user'], $_SESSION['email']))) {
+        if (isset($_SESSION['user'], $_SESSION['email'])) {
             $data['user'] = ['email' => $_SESSION['email'], 'name' => $_SESSION['user']];
+        } elseif (isset($_COOKIE['email'], $_COOKIE['user'])) {
+            $data['user'] = ['email' => $_COOKIE['email'], 'name' => $_COOKIE['user']];
         }
 
         $body = $this->view->render('login', $data);
@@ -32,6 +34,11 @@ class LoginController extends Controller
         try {
             // If there will be any errors, the exception will be thrown. Thus, the code below will not be executed.
             $model = (new AuthenticateService($this->model))->run($params['email'], $params['password']);
+
+            if (isset($params['remember_me'])) {
+                setcookie('email', $params['email'], time() + (86400 * 7), '/');
+                setcookie('user', $model->user->first_name, time() + (86400 * 7), '/');
+            }
 
             $_SESSION['email'] = $model->user->email;
             $_SESSION['user'] = $model->user->first_name;
@@ -52,6 +59,11 @@ class LoginController extends Controller
             session_destroy();
         }
 
+        if (isset($_COOKIE['email'])) {
+            setcookie('email', '', time() - (86400 * 7), '/');
+            setcookie('user', '', time() - (86400 * 7), '/');
+        }
+
         return new HTMLResponse(['Location:/login'], $this->view->render('login', []));
     }
 
@@ -61,6 +73,8 @@ class LoginController extends Controller
 
         if ((isset($_SESSION['user'], $_SESSION['email']))) {
             $data['user'] = ['email' => $_SESSION['email'], 'name' => $_SESSION['user']];
+        } elseif (isset($_COOKIE['email'], $_COOKIE['user'])) {
+            $data['user'] = ['email' => $_COOKIE['email'], 'name' => $_COOKIE['user']];
         }
 
         $body = $this->view->render('register', $data);
