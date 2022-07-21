@@ -11,6 +11,7 @@ use App\core\Database\IRepository;
 use App\core\Database\LoginRepository;
 use App\Core\Database\RESTRepository;
 use App\core\Log\FileLogger;
+use Psr\Log\LoggerInterface;
 use ReflectionClass;
 use ReflectionException;
 
@@ -73,6 +74,9 @@ class ServiceProvider
             },
             IView::class => function (string $class, ServiceProvider $serviceProvider) {
                 return new TwigView();
+            },
+            LoggerInterface::class => function (string $class, ServiceProvider $serviceProvider) {
+                return new FileLogger();
             },
             'ConnectDb' => function () {
                 return new Database();

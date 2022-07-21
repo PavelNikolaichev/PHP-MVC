@@ -6,10 +6,11 @@ use App\Core\Model;
 use App\Core\QueryBuilder;
 use App\models\LoginModel;
 use InvalidArgumentException;
+use Psr\Log\LoggerInterface;
 
 class LoginRepository implements IRepository
 {
-    public function __construct(private QueryBuilder $queryBuilder) {}
+    public function __construct(private QueryBuilder $queryBuilder, private LoggerInterface $logger) {}
 
     public function fetchAll(): array
     {
@@ -95,5 +96,10 @@ class LoginRepository implements IRepository
     final public function delete(int $id): void
     {
         $this->queryBuilder->fetch('logins')->delete($id);
+    }
+
+    public function getLogger(): LoggerInterface
+    {
+        return $this->logger;
     }
 }

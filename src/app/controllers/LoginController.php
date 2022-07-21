@@ -7,7 +7,6 @@ use App\core\Responses\HTMLResponse;
 use App\core\Responses\IResponse;
 use App\core\Services\AuthenticateService;
 use App\core\Services\RegistrationService;
-use App\models\LoginModel;
 use Exception;
 
 class LoginController extends Controller
@@ -73,7 +72,7 @@ class LoginController extends Controller
     {
         $data = [];
         $headers = ['200 OK'];
-        $serviceParams = [$params['email'], $params['first_name'], $params['last_name'], $params['password'], $params['password_confirmation']];
+        $serviceParams = array_intersect_key($params, array_flip(['email', 'first_name', 'last_name', 'password', 'password_confirmation']));
 
         try {
             // If there will be any errors, the exception will be thrown. Thus, the code below will not be executed.
