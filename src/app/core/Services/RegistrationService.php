@@ -24,7 +24,13 @@ class RegistrationService
         );
 
         if (!$validator->isValid()) {
-            return new RegistrationEvent(false, null, 'Please check your credentials and try again.' . print_r($validator->getErrors(), true));
+            $errors = '';
+
+            foreach ($validator->getErrors() as $field => $error) {
+                $errors .= $field . ': ' . $error . PHP_EOL;
+            }
+
+            return new RegistrationEvent(false, null, 'Please check your credentials and try again.'. PHP_EOL . $errors);
         }
 
         $model = new LoginModel($email, $first_name, $last_name, $password);
