@@ -6,16 +6,20 @@ use App\Core\Model;
 
 class LoginModel extends Model
 {
-    public string $name;
+    public string $first_name;
+    public string $last_name;
     public string $email;
     public string $password;
+    public ?int $id;
     private array $errors = [];
 
-    public function __construct(string $email, string $name, string $password)
+    public function __construct(string $email, string $first_name, string $last_name, string $password, int $id = null)
     {
         $this->email = $email;
-        $this->name = $name;
+        $this->first_name = $first_name;
+        $this->last_name = $last_name;
         $this->password = $password;
+        $this->id = $id;
     }
 
     /**
@@ -25,7 +29,8 @@ class LoginModel extends Model
      */
     final public function validate(): array
     {
-        $this->validateName();
+        $this->validateName($this->first_name);
+        $this->validateName($this->last_name);
         $this->validateEmail();
         $this->validatePassword();
 
@@ -35,13 +40,14 @@ class LoginModel extends Model
     /**
      * Validates name field.
      *
+     * @param $name - name to validate.
      * @return void
      */
-    private function validateName(): void
+    private function validateName($name): void
     {
-        if (empty($this->name)) {
+        if (empty($name)) {
             $this->addError('name', 'Name cannot be empty.');
-        } elseif (!preg_match("/^([a-zA-Z\d']+)$/", $this->name)) {
+        } elseif (!preg_match("/^([a-zA-Z\d']+)$/", $name)) {
             $this->addError('name', 'Name must contain letters or numbers without spaces.');
         }
     }
@@ -64,8 +70,8 @@ class LoginModel extends Model
     {
         if (empty($this->password)) {
             $this->addError('password', 'Password cannot be empty.');
-        } elseif (strlen($this->password) < 6) {
-            $this->addError('password', 'Password must be at least 6 characters long.');
+        } elseif (!preg_match("/^\S*(?=\S{6,})(?=\S*[a-z])(?=\S*[A-Z])(?=\S*[\d])(?=\S*[\W])\S*$/", $this->password)) {
+            $this->addError('password', 'Password must be at least 6 characters long and contain at least 1 capital letter, 1 special character and 1 digit.');
         }
     }
 

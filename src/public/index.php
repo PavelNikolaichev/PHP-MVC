@@ -32,6 +32,13 @@ $router->post('/logout', function ($params) use ($serviceProvider) {
     return $serviceProvider->make(LoginController::class)->logoutPost($params);
 });
 
+$router->get('/register', function ($params) use ($serviceProvider) {
+    return $serviceProvider->make(LoginController::class)->register($params);
+});
+$router->post('/register', function ($params) use ($serviceProvider) {
+    return $serviceProvider->make(LoginController::class)->registerPOST($params);
+});
+
 $router->get('/user', function ($params) use ($serviceProvider) {
     return $serviceProvider->make(UserController::class)->user($params);
 });

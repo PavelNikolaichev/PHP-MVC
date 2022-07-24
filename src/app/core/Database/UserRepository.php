@@ -9,12 +9,7 @@ use InvalidArgumentException;
 
 class UserRepository implements IRepository
 {
-    private $queryBuilder;
-
-    public function __construct(QueryBuilder $queryBuilder)
-    {
-        $this->queryBuilder = $queryBuilder;
-    }
+    public function __construct(private QueryBuilder $queryBuilder) {}
 
     /**
      * Method to get all users from the database.
@@ -72,15 +67,19 @@ class UserRepository implements IRepository
      */
     final public function save(Model $model): Model
     {
+        $modelData = get_object_vars($model);
+
         if (null === $model->id) {
+            unset($modelData['id']);
+
             return new UserModel(...($this->queryBuilder
                 ->fetch('users')
-                ->insert(get_object_vars($model))));
+                ->insert($modelData)));
         }
 
         $data = $this->queryBuilder
             ->fetch('users')
-            ->update(get_object_vars($model));
+            ->update($modelData);
 
         return new UserModel(...$data);
     }
