@@ -3,7 +3,7 @@
 {% block body %}
 <div class="container" id="files-container">
     <h1>File upload</h1>
-    {% if user is defined %}
+    {% if user is not null %}
         <form action="/file-upload" method="post" enctype="multipart/form-data" id="fileForm">
             <div class="input-group mb-3">
                 <div class="input-group-prepend">

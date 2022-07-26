@@ -102,4 +102,42 @@ class LoginRepository implements IRepository
     {
         return $this->logger;
     }
+
+    public function fetchByToken(string $token)
+    {
+        // TODO: make a leftJoin and LoginModel construction. See where can I get user ip.
+        $data = $this->queryBuilder
+            ->fetch('sessions')
+            ->select(['*'])
+            ->where('token', '=', $token)
+            ->andWhere('expiration_date', '>', date('Y-m-d H:i:s'))
+            ->andWhere('user_ip', '=', $_SERVER['REMOTE_ADDR'])
+            ->leftJoin('logins', ['sessions.user_id as user_id'], '=', 'logins.id')
+            ->get();
+
+        if (empty($data)) {
+            return null;
+        }
+
+        return new LoginModel(...$data[0]);
+    }
+
+    public function saveToken(int $id, string $token, $ip)
+    {
+        $data = $this->queryBuilder
+            ->fetch('sessions')
+            ->insert(['id' => $id, 'token' => $token, 'user_ip' => $ip]);
+
+        if (empty($data)) {
+            return null;
+        }
+
+        return new LoginModel(...$data[0]);
+    }
+
+    public function deleteToken(int $id)
+    {
+        // TODO: delete by token instead of id
+        $this->queryBuilder->fetch('sessions')->delete($id);
+    }
 }

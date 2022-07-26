@@ -65,6 +65,7 @@ class ServiceProvider
                 return new $class(
                     $serviceProvider->make(LoginRepository::class),
                     $serviceProvider->make(IView::class),
+                    $serviceProvider->make(IAuthenticatedUser::class)
                 );
             },
             FileRepository::class => function (string $class, ServiceProvider $serviceProvider) {
@@ -78,6 +79,9 @@ class ServiceProvider
             LoggerInterface::class => function (string $class, ServiceProvider $serviceProvider) {
                 return new FileLogger();
             },
+            IAuthenticatedUser::class => function (string $class, ServiceProvider $serviceProvider) {
+                return $serviceProvider->make(SessionAuthenticatedUser::class);
+            },
             'ConnectDb' => function () {
                 return new Database();
             },
@@ -86,6 +90,7 @@ class ServiceProvider
         $this->singletons = [
             'ConnectDb',
             SessionManager::class,
+            IAuthenticatedUser::class,
         ];
     }
 
@@ -105,7 +110,7 @@ class ServiceProvider
             }
 
             $this->instances[$class] = isset($this->map[$class])
-                ? call_user_func($this->map[$class])
+                ? call_user_func($this->map[$class], $class, $this)
                 : $this->makeThroughReflection($class);
 
             return $this->instances[$class];

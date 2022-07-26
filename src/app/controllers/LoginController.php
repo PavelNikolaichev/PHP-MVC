@@ -3,6 +3,9 @@
 namespace App\controllers;
 
 use App\Core\Controller;
+use App\core\Database\IRepository;
+use App\core\IAuthenticatedUser;
+use App\Core\IView;
 use App\core\Responses\HTMLResponse;
 use App\core\Responses\IResponse;
 use App\core\Services\AuthenticateService;
@@ -11,15 +14,16 @@ use Exception;
 
 class LoginController extends Controller
 {
+    public function __construct(IRepository $model, IView $view, private IAuthenticatedUser $sessionAuthenticatedUser)
+    {
+        parent::__construct($model, $view);
+    }
+
     public function login($params): IResponse
     {
         $data = [...$params];
 
-        if (isset($_SESSION['user'], $_SESSION['email'])) {
-            $data['user'] = ['email' => $_SESSION['email'], 'name' => $_SESSION['user']];
-        } elseif (isset($_COOKIE['email'], $_COOKIE['user'])) {
-            $data['user'] = ['email' => $_COOKIE['email'], 'name' => $_COOKIE['user']];
-        }
+        $data['user'] = $this->sessionAuthenticatedUser->getUser();
 
         $body = $this->view->render('login', $data);
 
@@ -36,8 +40,9 @@ class LoginController extends Controller
             $model = (new AuthenticateService($this->model))->run($params['email'], $params['password']);
 
             if (isset($params['remember_me'])) {
-                setcookie('email', $params['email'], time() + (86400 * 7), '/');
-                setcookie('user', $model->user->first_name, time() + (86400 * 7), '/');
+                $token = md5(uniqid('', true));
+                $this->model->saveToken($model->user->id, $token);
+                setcookie('token', $token, time() + (86400 * 7), '/');
             }
 
             $_SESSION['email'] = $model->user->email;
@@ -60,8 +65,7 @@ class LoginController extends Controller
         }
 
         if (isset($_COOKIE['email'])) {
-            setcookie('email', '', time() - (86400 * 7), '/');
-            setcookie('user', '', time() - (86400 * 7), '/');
+            setcookie('token', '', time() - (86400 * 7), '/');
         }
 
         return new HTMLResponse(['Location:/login'], $this->view->render('login', []));
@@ -71,11 +75,7 @@ class LoginController extends Controller
     {
         $data = [];
 
-        if ((isset($_SESSION['user'], $_SESSION['email']))) {
-            $data['user'] = ['email' => $_SESSION['email'], 'name' => $_SESSION['user']];
-        } elseif (isset($_COOKIE['email'], $_COOKIE['user'])) {
-            $data['user'] = ['email' => $_COOKIE['email'], 'name' => $_COOKIE['user']];
-        }
+        $data['user'] = $this->sessionAuthenticatedUser->getUser();
 
         $body = $this->view->render('register', $data);
 

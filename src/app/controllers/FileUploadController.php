@@ -3,6 +3,9 @@
 namespace App\controllers;
 
 use App\Core\Controller;
+use App\core\Database\IRepository;
+use App\core\IAuthenticatedUser;
+use App\core\IView;
 use App\core\Responses\HTMLResponse;
 use App\core\Responses\IResponse;
 use App\core\Responses\JSONResponse;
@@ -10,6 +13,11 @@ use App\models\FileModel;
 
 class FileUploadController extends Controller
 {
+    public function __construct(IRepository $model, IView $view, private IAuthenticatedUser $sessionAuthenticatedUser)
+    {
+        parent::__construct($model, $view);
+    }
+
     public function index(): IResponse
     {
         $files = [];
@@ -22,11 +30,7 @@ class FileUploadController extends Controller
             'files' => $files,
         ];
 
-        if (isset($_SESSION['email'], $_SESSION['user'])) {
-            $data['user'] = ['email' => $_SESSION['email'], 'name' => $_SESSION['user']];
-        } elseif (isset($_COOKIE['email'], $_COOKIE['user'])) {
-            $data['user'] = ['email' => $_COOKIE['email'], 'name' => $_COOKIE['user']];
-        }
+        $data['user'] = $this->sessionAuthenticatedUser->getUser();
 
         $body = $this->view->render('fileUpload', $data);
 
@@ -35,7 +39,7 @@ class FileUploadController extends Controller
 
     public function upload(): IResponse
     {
-        if (!isset($_SESSION['user'], $_SESSION['email'], $_COOKIE['email'], $_COOKIE['user'])) {
+        if (null === $this->sessionAuthenticatedUser->getUser()) {
             return new JSONResponse([400], ['message' => 'You should sign in to upload files.']);
         }
 
