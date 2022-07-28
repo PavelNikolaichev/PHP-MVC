@@ -3,6 +3,7 @@
 namespace App\models;
 
 use App\Core\Model;
+use JetBrains\PhpStorm\ArrayShape;
 
 class FileModel extends Model
 {
@@ -29,7 +30,7 @@ class FileModel extends Model
     /**
      * @return array
      */
-    public function toReadable(): array
+    #[ArrayShape(['name' => "string", 'extension' => "string", 'meta' => "string", 'size' => "string"])] public function toReadable(): array
     {
         return [
             'name' => $this->name,

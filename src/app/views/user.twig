@@ -1,7 +1,7 @@
 {% extends 'base.twig' %}
 
 {% block body %}
-<h1>User</h1>
+    <h1>User</h1>
 {% if user is defined %}
     <form action="/user?id={{ user.id }}" method="post" id="userForm">
         <div class="form-group row">

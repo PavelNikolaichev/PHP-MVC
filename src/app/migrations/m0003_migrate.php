@@ -4,7 +4,7 @@ class m0003_migrate
 {
     public function up(PDO $pdo): void
     {
-        $pdo->exec('create table logins (
+        $pdo->exec('create table if not exists logins (
             id     int auto_increment unique,
             email  varchar(255) not null unique,
             first_name   varchar(255) not null,

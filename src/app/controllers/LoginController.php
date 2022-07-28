@@ -3,6 +3,7 @@
 namespace App\controllers;
 
 use App\Core\Controller;
+use App\core\Database\IAttemptsRepository;
 use App\core\Database\IRepository;
 use App\core\IAuthenticatedUser;
 use App\Core\IView;
@@ -14,7 +15,7 @@ use Exception;
 
 class LoginController extends Controller
 {
-    public function __construct(IRepository $model, IView $view, private IAuthenticatedUser $sessionAuthenticatedUser)
+    public function __construct(IRepository $model, IView $view, private IAttemptsRepository $attemptsRepository, private IAuthenticatedUser $sessionAuthenticatedUser)
     {
         parent::__construct($model, $view);
     }
@@ -37,7 +38,7 @@ class LoginController extends Controller
 
         try {
             // If there will be any errors, the exception will be thrown. Thus, the code below will not be executed.
-            $model = (new AuthenticateService($this->model))->run($params['email'], $params['password']);
+            $model = (new AuthenticateService($this->model, $this->attemptsRepository))->run($params['email'], $params['password']);
 
             if (isset($params['remember_me'])) {
                 $token = md5(uniqid('', true));
@@ -64,7 +65,8 @@ class LoginController extends Controller
             session_destroy();
         }
 
-        if (isset($_COOKIE['email'])) {
+        if (isset($_COOKIE['token'])) {
+            $this->model->deleteToken($_COOKIE['token']);
             setcookie('token', '', time() - (86400 * 7), '/');
         }
 
@@ -85,7 +87,6 @@ class LoginController extends Controller
     public function registerPOST($params): IResponse
     {
         $data = [];
-        $headers = ['200 OK'];
         $serviceParams = array_intersect_key($params, array_flip(['email', 'first_name', 'last_name', 'password', 'password_confirmation']));
 
         try {

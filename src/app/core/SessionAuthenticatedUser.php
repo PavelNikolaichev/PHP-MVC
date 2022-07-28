@@ -12,15 +12,22 @@ class SessionAuthenticatedUser implements IAuthenticatedUser
     {
         if (isset($_SESSION['user'], $_SESSION['email'])) {
             $this->user = ['email' => $_SESSION['email'], 'name' => $_SESSION['user']];
-        }
-
-        if (isset($_COOKIE['token'])) {
+        } elseif (isset($_COOKIE['token'])) {
             $user = $this->repository->fetchByToken($_COOKIE['token']);
 
-            $_SESSION['user'] = $user->first_name;
-            $_SESSION['email'] = $user->email;
+            if (null === $user) {
+                unset($_COOKIE['token']);
+                setcookie('token', '', time() - (86400 * 7), '/');
+            }
 
-            $this->user = ['email' => $user->email, 'name' => $user->first_name];
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
+
+            $_SESSION['user'] = $user->first_name ?? null;
+            $_SESSION['email'] = $user->email ?? null;
+
+            $this->user = (null === $user) ? null : ['email' => $user->email, 'name' => $user->first_name];
         }
     }
 

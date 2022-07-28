@@ -5,8 +5,10 @@ namespace App\Core;
 use App\controllers\FileUploadController;
 use App\controllers\LoginController;
 use App\controllers\UserController;
+use App\core\Database\AttemptsRepository;
 use App\Core\Database\Database;
 use App\core\Database\FileRepository;
+use App\core\Database\IAttemptsRepository;
 use App\core\Database\IRepository;
 use App\core\Database\LoginRepository;
 use App\Core\Database\RESTRepository;
@@ -34,7 +36,6 @@ class ServiceProvider
      *
      * @return void
      * @noinspection PhpUnusedParameterInspection
-     * @noinspection PhpUnusedParameterInspection
      */
     private function bootstrap(): void
     {
@@ -59,12 +60,14 @@ class ServiceProvider
                 return new $class(
                     $serviceProvider->make(FileRepository::class),
                     $serviceProvider->make(IView::class),
+                    $serviceProvider->make(IAuthenticatedUser::class)
                 );
             },
             LoginController::class => function (string $class, ServiceProvider $serviceProvider) {
                 return new $class(
                     $serviceProvider->make(LoginRepository::class),
                     $serviceProvider->make(IView::class),
+                    $serviceProvider->make(IAttemptsRepository::class),
                     $serviceProvider->make(IAuthenticatedUser::class)
                 );
             },
@@ -81,6 +84,12 @@ class ServiceProvider
             },
             IAuthenticatedUser::class => function (string $class, ServiceProvider $serviceProvider) {
                 return $serviceProvider->make(SessionAuthenticatedUser::class);
+            },
+            IAttemptsRepository::class => function (string $class, ServiceProvider $serviceProvider) {
+                return new AttemptsRepository(
+                    $serviceProvider->make(QueryBuilder::class),
+                    $serviceProvider->make(LoggerInterface::class)
+                );
             },
             'ConnectDb' => function () {
                 return new Database();

@@ -8,7 +8,7 @@ use App\models\LoginModel;
 
 class RegistrationService
 {
-    public function __construct(private LoginRepository $repo, ) {}
+    public function __construct(private LoginRepository $repo) {}
 
     public function run(string $email, string $first_name, string $last_name, string $password, string $password_confirmation): RegistrationEvent
     {

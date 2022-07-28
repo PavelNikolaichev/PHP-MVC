@@ -91,6 +91,6 @@ class UserRepository implements IRepository
      */
     final public function delete(int $id): void
     {
-        $this->queryBuilder->fetch('users')->delete($id);
+        $this->queryBuilder->fetch('users')->delete('id', $id);
     }
 }

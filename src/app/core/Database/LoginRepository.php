@@ -43,6 +43,7 @@ class LoginRepository implements IRepository
         if (empty($data)) {
             return null;
         }
+        unset($data[0]['created_date']);
 
         return new LoginModel(...$data[0]);
     }
@@ -95,7 +96,7 @@ class LoginRepository implements IRepository
      */
     final public function delete(int $id): void
     {
-        $this->queryBuilder->fetch('logins')->delete($id);
+        $this->queryBuilder->fetch('logins')->delete('id', $id);
     }
 
     public function getLogger(): LoggerInterface
@@ -103,41 +104,55 @@ class LoginRepository implements IRepository
         return $this->logger;
     }
 
-    public function fetchByToken(string $token)
+    public function fetchByToken(string $token): ?LoginModel
     {
-        // TODO: make a leftJoin and LoginModel construction. See where can I get user ip.
         $data = $this->queryBuilder
             ->fetch('sessions')
             ->select(['*'])
             ->where('token', '=', $token)
             ->andWhere('expiration_date', '>', date('Y-m-d H:i:s'))
-            ->andWhere('user_ip', '=', $_SERVER['REMOTE_ADDR'])
-            ->leftJoin('logins', ['sessions.user_id as user_id'], '=', 'logins.id')
+            ->andWhere('user_ip', '=', ip2long($this->getIP()))
+            ->leftJoin('logins', ['*'], ['logins' => 'id', 'sessions' => 'user_id'])
             ->get();
 
         if (empty($data)) {
             return null;
         }
 
-        return new LoginModel(...$data[0]);
+        //TODO: remove additional data clearance.
+        $data = array_intersect_key($data[0], array_flip(['email', 'first_name', 'last_name', 'password', 'password_confirmation']));
+
+        return new LoginModel(...$data);
     }
 
-    public function saveToken(int $id, string $token, $ip)
+    public function saveToken(int $id, string $token): ?LoginModel
     {
         $data = $this->queryBuilder
             ->fetch('sessions')
-            ->insert(['id' => $id, 'token' => $token, 'user_ip' => $ip]);
+            ->insert(['user_id' => $id, 'token' => $token, 'user_ip' => ip2long($this->getIP())]);
 
         if (empty($data)) {
             return null;
         }
 
-        return new LoginModel(...$data[0]);
+        return $this->fetch((int)$data['user_id']);
     }
 
-    public function deleteToken(int $id)
+    public function deleteToken(string $token): void
     {
-        // TODO: delete by token instead of id
-        $this->queryBuilder->fetch('sessions')->delete($id);
+        $this->queryBuilder->fetch('sessions')->delete('token', $token);
+    }
+
+    private function getIP()
+    {
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            return $_SERVER['HTTP_CLIENT_IP'];
+        }
+
+        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            return $_SERVER['HTTP_X_FORWARDED_FOR'];
+        }
+
+        return $_SERVER['REMOTE_ADDR'];
     }
 }

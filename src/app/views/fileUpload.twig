@@ -1,7 +1,7 @@
 {% extends 'base.twig' %}
 
 {% block body %}
-<div class="container" id="files-container">
+    <div class="container" id="files-container">
     <h1>File upload</h1>
     {% if user is not null %}
         <form action="/file-upload" method="post" enctype="multipart/form-data" id="fileForm">
