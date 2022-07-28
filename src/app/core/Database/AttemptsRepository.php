@@ -22,7 +22,7 @@ class AttemptsRepository implements IAttemptsRepository
             return false;
         }
 
-        return $data[0]['unbanned_at'] > time();
+        return $data[0]['unbanned_at'] > date('Y-m-d H:i:s');
     }
 
     public function save(string|null $unbanned_at, int $attempts): array
