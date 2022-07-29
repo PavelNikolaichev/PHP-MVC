@@ -4,12 +4,15 @@ namespace App\core\Database;
 
 use App\Core\Model;
 use App\Core\QueryBuilder;
+use App\core\Traits\TraitIP;
 use App\models\LoginModel;
 use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 
 class LoginRepository implements ILoginRepository
 {
+    use TraitIP;
+
     public function __construct(private QueryBuilder $queryBuilder, private LoggerInterface $logger) {}
 
     public function fetchAll(): array
@@ -136,18 +139,5 @@ class LoginRepository implements ILoginRepository
     public function deleteToken(string $token): void
     {
         $this->queryBuilder->fetch('sessions')->delete('token', $token);
-    }
-
-    private function getIP(): string
-    {
-        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-            return $_SERVER['HTTP_CLIENT_IP'];
-        }
-
-        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            return $_SERVER['HTTP_X_FORWARDED_FOR'];
-        }
-
-        return $_SERVER['REMOTE_ADDR'];
     }
 }

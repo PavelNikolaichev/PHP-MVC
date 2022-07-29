@@ -2,13 +2,16 @@
 
 namespace App\core\Database;
 
+use App\core\Log\LoginLogger;
 use App\Core\QueryBuilder;
+use App\core\Traits\TraitIP;
 use DateTime;
-use Psr\Log\LoggerInterface;
 
 class AttemptsRepository implements IAttemptsRepository
 {
-    public function __construct(private QueryBuilder $queryBuilder, private LoggerInterface $logger) {}
+    use TraitIP;
+
+    public function __construct(private QueryBuilder $queryBuilder, private LoginLogger $logger) {}
 
     public function isBanned(): bool
     {
@@ -72,12 +75,22 @@ class AttemptsRepository implements IAttemptsRepository
 
     public function update(string $unbanned_at, int $attempts): array
     {
-        return $this->queryBuilder
+        $data = $this->queryBuilder
             ->fetch('attempts')
             ->update(
                 ['ip', ip2long($this->getIP())],
                 ['unbanned_at' => $unbanned_at, 'attempts' => $attempts]
             );
+
+        if (!empty($data['unbanned_at'])) {
+            $this->logger->info('User has been banned [{ip}, {first_attempt}, {unbanned_at}].', [
+                'ip' => $this->getIP(),
+                'first_attempt' => $data['first_attempt_at'],
+                'unbanned_at' => $data['unbanned_at']
+            ]);
+        }
+
+        return $data;
     }
 
     public function fetch(): array|null
@@ -93,18 +106,5 @@ class AttemptsRepository implements IAttemptsRepository
         }
 
         return $data[0];
-    }
-
-    private function getIP()
-    {
-        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-            return $_SERVER['HTTP_CLIENT_IP'];
-        }
-
-        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            return $_SERVER['HTTP_X_FORWARDED_FOR'];
-        }
-
-        return $_SERVER['REMOTE_ADDR'];
     }
 }

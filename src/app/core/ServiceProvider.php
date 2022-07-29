@@ -13,6 +13,7 @@ use App\core\Database\IRepository;
 use App\core\Database\LoginRepository;
 use App\Core\Database\RESTRepository;
 use App\core\Log\FileLogger;
+use App\core\Log\LoginLogger;
 use App\core\Services\AuthenticateService;
 use App\core\Services\RegistrationService;
 use Psr\Log\LoggerInterface;
@@ -91,7 +92,7 @@ class ServiceProvider
             IAttemptsRepository::class => function (string $class, ServiceProvider $serviceProvider) {
                 return new AttemptsRepository(
                     $serviceProvider->make(QueryBuilder::class),
-                    $serviceProvider->make(LoggerInterface::class)
+                    $serviceProvider->make(LoginLogger::class)
                 );
             },
             'ConnectDb' => function () {
