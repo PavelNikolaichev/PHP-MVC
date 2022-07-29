@@ -186,22 +186,6 @@ class QueryBuilder
         return $this->fetch($this->table)->select(['*'])->where('id', '=', $this->db->lastInsertId())->get()[0];
     }
 
-    public function insertOnUpdate(array $values): void
-    {
-        $keys = array_keys($values);
-
-        $keys = implode(', ', $keys);
-
-        $this->setSql("INSERT INTO $this->table ($keys) VALUES (:" . implode(', :', array_keys($values)) . ")");
-        $res = implode(', ', array_map(
-            function ($key) { return $key . ' = :' . $key; },
-            array_keys($values)
-        ));
-
-        $this->setSql(" ON DUPLICATE KEY UPDATE $res");
-        $this->query($this->sql, $values);
-    }
-
     public function update(array $where, array $values): array
     {
         $keys = $values['id'] ?? [];
