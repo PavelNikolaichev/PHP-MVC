@@ -3,8 +3,7 @@
 namespace App\controllers;
 
 use App\Core\Controller;
-use App\core\Database\IAttemptsRepository;
-use App\core\Database\IRepository;
+use App\core\Database\ILoginRepository;
 use App\core\IAuthenticatedUser;
 use App\Core\IView;
 use App\core\Responses\HTMLResponse;
@@ -15,8 +14,13 @@ use Exception;
 
 class LoginController extends Controller
 {
-    public function __construct(IRepository $model, IView $view, private IAttemptsRepository $attemptsRepository, private IAuthenticatedUser $sessionAuthenticatedUser)
-    {
+    public function __construct(
+        ILoginRepository $model,
+        IView $view,
+        private AuthenticateService $authenticateService,
+        private RegistrationService $registrationService,
+        private IAuthenticatedUser $sessionAuthenticatedUser
+    ) {
         parent::__construct($model, $view);
     }
 
@@ -38,7 +42,7 @@ class LoginController extends Controller
 
         try {
             // If there will be any errors, the exception will be thrown. Thus, the code below will not be executed.
-            $model = (new AuthenticateService($this->model, $this->attemptsRepository))->run($params['email'], $params['password']);
+            $model = $this->authenticateService->run($params['email'], $params['password']);
 
             if (isset($params['remember_me'])) {
                 $token = md5(uniqid('', true));
@@ -91,7 +95,7 @@ class LoginController extends Controller
 
         try {
             // If there will be any errors, the exception will be thrown. Thus, the code below will not be executed.
-            $model = (new RegistrationService($this->model))->run(...$serviceParams);
+            $model = $this->registrationService->run(...$serviceParams);
 
             $_SESSION['email'] = $model->user->email;
             $_SESSION['user'] = $model->user->first_name;

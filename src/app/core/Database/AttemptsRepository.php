@@ -36,7 +36,7 @@ class AttemptsRepository implements IAttemptsRepository
             ]);
     }
 
-    public function timeLeft(): int
+    public function timeLeft(): string
     {
         $data = $this->queryBuilder
             ->fetch('attempts')
@@ -48,33 +48,26 @@ class AttemptsRepository implements IAttemptsRepository
             return 0;
         }
 
-        $time = strtotime($data[0]['unbanned_at']) - time();
-        return max($time, 0);
+        $time = DateTime::createFromFormat('Y-m-d H:i:s', $data[0]['unbanned_at'])->diff(new DateTime('now'));
+        return max($time->format('%h hours, %i minutes, %s seconds'), 0);
     }
 
     public function incrementAttempt(): array
     {
-        $data = $this->queryBuilder
+        $sql = "INSERT INTO attempts (ip, attempts) VALUES (:ip, :attempts) ON DUPLICATE KEY UPDATE attempts = attempts + 1";
+        $this->queryBuilder->query(
+            $sql,
+            [
+                'ip' => ip2long($this->getIP()),
+                'attempts' => 1
+            ]
+        );
+
+        return $this->queryBuilder
             ->fetch('attempts')
             ->select(['*'])
             ->where('ip', '=', ip2long($this->getIP()))
             ->get();
-
-        if (empty($data)) {
-            return $this->queryBuilder
-                ->fetch('attempts')
-                ->insert([
-                    'ip' => ip2long($this->getIP()),
-                    'attempts' => 1,
-                ]);
-        }
-
-        return $this->queryBuilder
-            ->fetch('attempts')
-            ->update(
-                ['ip', ip2long($this->getIP())],
-                ['attempts' => $data[0]['attempts'] + 1]
-            );
     }
 
     public function update(string $unbanned_at, int $attempts): array

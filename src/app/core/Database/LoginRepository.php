@@ -8,7 +8,7 @@ use App\models\LoginModel;
 use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 
-class LoginRepository implements IRepository
+class LoginRepository implements ILoginRepository
 {
     public function __construct(private QueryBuilder $queryBuilder, private LoggerInterface $logger) {}
 
@@ -36,16 +36,11 @@ class LoginRepository implements IRepository
 
         $data = $this->queryBuilder
             ->fetch('logins')
-            ->select(['*'])
+            ->select([array_keys(get_class_vars(LoginModel::class))])
             ->where('id', '=', $id)
-            ->get();
+            ->get()[0] ?? null;
 
-        if (empty($data)) {
-            return null;
-        }
-        unset($data[0]['created_date']);
-
-        return new LoginModel(...$data[0]);
+        return $data ? new LoginModel(...$data) : null;
     }
 
     public function fetchByField(string $field, string $value): LoginModel|null
@@ -143,7 +138,7 @@ class LoginRepository implements IRepository
         $this->queryBuilder->fetch('sessions')->delete('token', $token);
     }
 
-    private function getIP()
+    private function getIP(): string
     {
         if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
             return $_SERVER['HTTP_CLIENT_IP'];

@@ -11,39 +11,25 @@ class AuthenticateService  {
     public function run($email, $pass): AuthenticateEvent
     {
         if ($this->attemptsRepository->isBanned()) {
-            return new AuthenticateEvent(false, null, 'You are banned. Please try again after ' . $this->attemptsRepository->timeLeft() . ' seconds.');
+            return new AuthenticateEvent(false, null, 'You are banned. Please try again after ' . $this->attemptsRepository->timeLeft() . '.');
         }
 
         $user = $this->repo->fetchByField('email', $email);
 
-        if ($user === null) {
-            return $this->incrementAttempt();
-        }
+        if ($user === null || !password_verify($pass, $user->password)) {
+            $this->attemptsRepository->incrementAttempt();
 
-        $isPasswordsMatch = password_verify($pass, $user->password);
+            $model = $this->attemptsRepository->fetch();
 
-        if (!$isPasswordsMatch) {
-            return $this->incrementAttempt();
+            if ($this->attemptsRepository->isBanned() || $model['attempts'] >= 3) {
+                $this->attemptsRepository->update(date("Y-m-d H:i:s", strtotime("+15 minutes")), 0);
+                return new AuthenticateEvent(false, null, 'You have failed 3 times. Please, try again after 15 minutes.');
+            }
+
+
+            return new AuthenticateEvent(false, null, 'Invalid credentials. You have ' . (3 - $model['attempts']) . ' attempts left.');
         }
 
         return new AuthenticateEvent(true, $user, null);
-    }
-
-    /**
-     * @return AuthenticateEvent
-     */
-    private function incrementAttempt(): AuthenticateEvent
-    {
-        $this->attemptsRepository->incrementAttempt();
-
-        $model = $this->attemptsRepository->fetch();
-
-        if ($this->attemptsRepository->isBanned() || $model['attempts'] >= 3) {
-            $this->attemptsRepository->update(date("Y-m-d H:i:s", strtotime("+15 minutes")), 0);
-            return new AuthenticateEvent(false, null, 'You have failed 3 times. Please, try again after 15 minutes.');
-        }
-
-
-        return new AuthenticateEvent(false, null, 'Invalid credentials. You have ' . (3 - $model['attempts']) . ' attempts left.');
     }
 }

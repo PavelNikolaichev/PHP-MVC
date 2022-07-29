@@ -13,6 +13,8 @@ use App\core\Database\IRepository;
 use App\core\Database\LoginRepository;
 use App\Core\Database\RESTRepository;
 use App\core\Log\FileLogger;
+use App\core\Services\AuthenticateService;
+use App\core\Services\RegistrationService;
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
 use ReflectionException;
@@ -67,7 +69,8 @@ class ServiceProvider
                 return new $class(
                     $serviceProvider->make(LoginRepository::class),
                     $serviceProvider->make(IView::class),
-                    $serviceProvider->make(IAttemptsRepository::class),
+                    $serviceProvider->make(AuthenticateService::class),
+                    $serviceProvider->make(RegistrationService::class),
                     $serviceProvider->make(IAuthenticatedUser::class)
                 );
             },
