@@ -11,6 +11,7 @@ use App\core\Responses\IResponse;
 use App\core\Services\AuthenticateService;
 use App\core\Services\RegistrationService;
 use Exception;
+use RuntimeException;
 
 class LoginController extends Controller
 {
@@ -41,6 +42,12 @@ class LoginController extends Controller
         $headers = ['200 OK'];
 
         try {
+            $data['user'] = $this->sessionAuthenticatedUser->getUser();
+
+            if ($data['user'] !== null) {
+                throw new RuntimeException('You are already logged in.');
+            }
+
             // If there will be any errors, the exception will be thrown. Thus, the code below will not be executed.
             $model = $this->authenticateService->run($params['email'], $params['password']);
 
@@ -94,6 +101,12 @@ class LoginController extends Controller
         $serviceParams = array_intersect_key($params, array_flip(['email', 'first_name', 'last_name', 'password', 'password_confirmation']));
 
         try {
+            $data['user'] = $this->sessionAuthenticatedUser->getUser();
+
+            if ($data['user'] !== null) {
+                throw new RuntimeException('You are already logged in.');
+            }
+
             // If there will be any errors, the exception will be thrown. Thus, the code below will not be executed.
             $model = $this->registrationService->run(...$serviceParams);
 

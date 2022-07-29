@@ -39,7 +39,7 @@ class LoginRepository implements ILoginRepository
 
         $data = $this->queryBuilder
             ->fetch('logins')
-            ->select([array_keys(get_class_vars(LoginModel::class))])
+            ->select(array_keys(get_class_vars(LoginModel::class)))
             ->where('id', '=', $id)
             ->get()[0] ?? null;
 
@@ -108,7 +108,6 @@ class LoginRepository implements ILoginRepository
             ->fetch('sessions')
             ->select(['*'])
             ->where('token', '=', $token)
-            ->andWhere('expiration_date', '>', date('Y-m-d H:i:s'))
             ->andWhere('user_ip', '=', ip2long($this->getIP()))
             ->leftJoin('logins', ['*'], ['logins' => 'id', 'sessions' => 'user_id'])
             ->get();

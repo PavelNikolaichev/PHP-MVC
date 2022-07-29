@@ -6,7 +6,7 @@ use App\core\Database\LoginRepository;
 
 class SessionAuthenticatedUser implements IAuthenticatedUser
 {
-    private array $user;
+    private array|null $user;
 
     public function __construct(private LoginRepository $repository)
     {
@@ -24,10 +24,13 @@ class SessionAuthenticatedUser implements IAuthenticatedUser
                 session_start();
             }
 
-            $_SESSION['user'] = $user->first_name ?? null;
-            $_SESSION['email'] = $user->email ?? null;
-
-            $this->user = (null === $user) ? null : ['email' => $user->email, 'name' => $user->first_name];
+            if ($user !== null) {
+                $_SESSION['user'] = $user->first_name;
+                $_SESSION['email'] = $user->email;
+                $this->user = ['email' => $user->email, 'name' => $user->first_name];
+            } else {
+                $this->user = null;
+            }
         }
     }
 

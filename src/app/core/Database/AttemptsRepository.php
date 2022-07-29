@@ -75,22 +75,12 @@ class AttemptsRepository implements IAttemptsRepository
 
     public function update(string $unbanned_at, int $attempts): array
     {
-        $data = $this->queryBuilder
+        return $this->queryBuilder
             ->fetch('attempts')
             ->update(
                 ['ip', ip2long($this->getIP())],
                 ['unbanned_at' => $unbanned_at, 'attempts' => $attempts]
             );
-
-        if (!empty($data['unbanned_at'])) {
-            $this->logger->info('User has been banned [{ip}, {first_attempt}, {unbanned_at}].', [
-                'ip' => $this->getIP(),
-                'first_attempt' => $data['first_attempt_at'],
-                'unbanned_at' => $data['unbanned_at']
-            ]);
-        }
-
-        return $data;
     }
 
     public function fetch(): array|null

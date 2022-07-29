@@ -2,12 +2,6 @@
 
 namespace App\core\Traits;
 
-use App\Core\Model;
-use App\Core\QueryBuilder;
-use App\models\LoginModel;
-use InvalidArgumentException;
-use Psr\Log\LoggerInterface;
-
 trait TraitIP
 {
     private function getIP(): string
