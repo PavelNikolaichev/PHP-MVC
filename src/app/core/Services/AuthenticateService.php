@@ -41,6 +41,8 @@ class AuthenticateService  {
             return new AuthenticateEvent(false, null, 'Invalid credentials. You have ' . (3 - $model['attempts']) . ' attempts left.');
         }
 
+        $this->attemptsRepository->delete();
+
         return new AuthenticateEvent(true, $user, null);
     }
 }

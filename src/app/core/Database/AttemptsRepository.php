@@ -15,6 +15,7 @@ class AttemptsRepository implements IAttemptsRepository
 
     public function isBanned(): bool
     {
+        // TODO: Mb we can fetch with a time condition, so we could rid of the time checks below.
         $data = $this->queryBuilder
             ->fetch('attempts')
             ->select(['*'])
@@ -25,7 +26,14 @@ class AttemptsRepository implements IAttemptsRepository
             return false;
         }
 
-        return $data[0]['unbanned_at'] > date('Y-m-d H:i:s');
+        // TODO: get rid of hardcoded values.
+        $att_time = DateTime::createFromFormat('Y-m-d H:i:s', $data[0]['first_attempt_at'])->modify('+15 minutes');
+
+        if ($att_time < new DateTime('now')) {
+            $this->update(null, 0, true);
+        }
+
+        return $data[0]['unbanned_at'] > date('Y-m-d H:i:s') && $att_time > date("Y-m-d H:i:s");
     }
 
     public function save(string|null $unbanned_at, int $attempts): array
@@ -73,14 +81,20 @@ class AttemptsRepository implements IAttemptsRepository
             ->get();
     }
 
-    public function update(string $unbanned_at, int $attempts): array
+    public function update(string|null $unbanned_at, int $attempts, bool $set_attempt=false): array
     {
+        $params = [
+            'unbanned_at' => $unbanned_at ?? null,
+            'attempts' => $attempts,
+        ];
+
+        if ($set_attempt) {
+            $params['first_attempt_at'] = date("Y-m-d H:i:s");
+        }
+
         return $this->queryBuilder
             ->fetch('attempts')
-            ->update(
-                ['ip', ip2long($this->getIP())],
-                ['unbanned_at' => $unbanned_at, 'attempts' => $attempts]
-            );
+            ->update(['ip', ip2long($this->getIP())], $params);
     }
 
     public function fetch(): array|null
@@ -96,5 +110,12 @@ class AttemptsRepository implements IAttemptsRepository
         }
 
         return $data[0];
+    }
+
+    public function delete(): void
+    {
+        $this->queryBuilder
+            ->fetch('attempts')
+            ->delete('ip', ip2long($this->getIP()));
     }
 }

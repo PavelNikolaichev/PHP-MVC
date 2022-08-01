@@ -15,7 +15,7 @@ RUN docker-php-ext-enable pdo_mysql
 RUN apt-get update
 RUN apt-get -y install cron
 
-#RUN crontab -l | { cat; echo "* * * * * bash /root/get_date.sh"; } | crontab -
+RUN crontab -l | { cat; echo "*/15 * * * * php /var/www/dbCleaner.php"; } | crontab -
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
