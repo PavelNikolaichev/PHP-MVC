@@ -10,16 +10,6 @@ RUN php -r "readfile('http://getcomposer.org/installer');" | php -- --install-di
 RUN docker-php-ext-install pdo pdo_mysql
 RUN docker-php-ext-enable pdo_mysql
 
-
-#Install Cron
-RUN apt-get update
-RUN apt-get -y install cron
-
-RUN crontab -l | { cat; echo "*/15 * * * * php /var/www/dbCleaner.php"; } | crontab -
-
 COPY --from=composer /usr/bin/composer /usr/bin/composer
-
-# Run the command on container startup
-CMD cron
 
 EXPOSE 80

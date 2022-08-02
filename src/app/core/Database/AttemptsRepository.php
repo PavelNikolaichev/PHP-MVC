@@ -33,7 +33,7 @@ class AttemptsRepository implements IAttemptsRepository
             $this->update(null, 0, true);
         }
 
-        return $data[0]['unbanned_at'] > date('Y-m-d H:i:s') && $att_time > date("Y-m-d H:i:s");
+        return $data[0]['unbanned_at'] > date('Y-m-d H:i:s') && $att_time > new DateTime('now');
     }
 
     public function save(string|null $unbanned_at, int $attempts): array
