@@ -61,7 +61,7 @@ class MigrationsHandler
      */
     private function saveMigrations(array $migrations): void
     {
-        $migrations = array_map(function ($migration) {
+        $migrations = array_map(static function ($migration) {
             return [
                 'migration' => $migration,
                 'created_at' => date('Y-m-d H:i:s'),

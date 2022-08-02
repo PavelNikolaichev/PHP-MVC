@@ -16,13 +16,16 @@ class TwigView implements IView
     }
 
     /**
-    * Method to render a view.
-    *
-    * @param string $name - name of the view file.
-    * @param array $data - data to be passed to the view.
-    *
-    * @return string - rendered view.
-    */
+     * Method to render a view.
+     *
+     * @param string $name - name of the view file.
+     * @param array $data - data to be passed to the view.
+     *
+     * @return string - rendered view.
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
+     */
     final public function render(string $name, array $data): string
     {
         return $this->getTwig()->render($name . '.twig', $data);

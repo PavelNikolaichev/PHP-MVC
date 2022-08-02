@@ -2,6 +2,8 @@
 
 namespace App\core\Responses;
 
+use JsonException;
+
 class JSONResponse implements IResponse
 {
     private array $headers;
@@ -32,7 +34,7 @@ class JSONResponse implements IResponse
     /**
      * Get response body.
      *
-     * @throws \JsonException
+     * @throws JsonException
      *
      * @return string - JSON-encoded body of the response.
      */

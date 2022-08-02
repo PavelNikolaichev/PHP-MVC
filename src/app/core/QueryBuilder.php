@@ -2,7 +2,10 @@
 
 namespace App\Core;
 
+use Exception;
 use PDO;
+use PDOStatement;
+use RuntimeException;
 
 class QueryBuilder
 {
@@ -46,7 +49,6 @@ class QueryBuilder
         $relation1 = $this->getRelation($relations);
         $relation2 = $this->getRelation($this->relations);
         $this->setJoin(" LEFT JOIN $this->tableProp ON $relation1 = $relation2");
-
         return $this;
     }
 
@@ -103,7 +105,7 @@ class QueryBuilder
     {
         try {
             $this->checkWhere($exp1, $cond, $exp2);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             die($e);
         }
 
@@ -114,14 +116,14 @@ class QueryBuilder
     {
         if (empty($column) || empty($cond) || empty($value)) {
             if ((!is_numeric($value)) || empty($column)) {
-                throw new \Exception('Incomplete - WHERE');
+                throw new RuntimeException('Incomplete - WHERE');
             }
         }
         if ($this->isCondition($cond)) {
             return;
         }
 
-        throw new \Exception('The wrong sign in WHERE');
+        throw new RuntimeException('The wrong sign in WHERE');
     }
 
     private function isCondition(string $code): bool
@@ -152,7 +154,7 @@ class QueryBuilder
     {
         try {
             $value = $this->checkValue($sample);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             die($e);
         }
 
@@ -162,7 +164,7 @@ class QueryBuilder
     private function checkValue($sample): string
     {
         if (!is_string($sample) && !is_int($sample)) {
-            throw new \Exception('Must be of the type string or integer, '.gettype($sample).' given');
+            throw new RuntimeException('Must be of the type string or integer, '.gettype($sample).' given');
         }
         $value = 'ID';
         if (!is_numeric($sample)) {
@@ -184,9 +186,10 @@ class QueryBuilder
         return $this->fetch($this->table)->select(['*'])->where('id', '=', $this->db->lastInsertId())->get()[0];
     }
 
-    public function update(array $values): array
+    public function update(array $where, array $values): array
     {
-        $keys = ['id' => $values['id']];
+        $keys = $values['id'] ?? [];
+
         $sql = [];
 
         foreach ($values as $key => $value) {
@@ -199,16 +202,16 @@ class QueryBuilder
         }
 
         $sql = implode(', ', $sql);
-        $this->setSql("UPDATE $this->table SET $sql WHERE id=:id");
-        $this->query($this->sql, $keys);
+        $this->setSql("UPDATE $this->table SET $sql WHERE " . $where[0] . "=:" . $where[0] . " AND last_insert_id(id)");
+        $this->query($this->sql, array_merge($keys, [$where[0] => $where[1]]));
 
-        return $this->fetch($this->table)->select(['*'])->where('id', '=', $values['id'])->get()[0];
+        return $this->fetch($this->table)->select(['*'])->where('id', '=', $this->db->lastInsertId())->get()[0];
     }
 
-    public function delete(int $id): void
+    public function delete(string $field, string $value): void
     {
-        $this->setSql("DELETE FROM $this->table WHERE id = :id");
-        $this->query($this->sql, ['id' => $id]);
+        $this->setSql("DELETE FROM $this->table WHERE " . $field . " = :value");
+        $this->query($this->sql, ['value' => $value]);
     }
 
     private function isEmpty($value): bool
@@ -283,7 +286,7 @@ class QueryBuilder
         return $this;
     }
 
-    public function query($sql, $params = [])
+    public function query($sql, $params = []): bool|PDOStatement
     {
         $stmt = $this->db->prepare($sql);
         if (!empty($params)) {

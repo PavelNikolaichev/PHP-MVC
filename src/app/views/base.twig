@@ -30,7 +30,9 @@
             </ul>
             {% if user is defined and user is not empty %}
                 <div class="col-md-3 text-end">
-                    <a href="/logout" class="btn btn-outline-primary me-2">Logout</a>
+                    <form action="/logout" method="post">
+                        <button type="submit" class="btn btn-outline-primary me-2">Logout</button>
+                    </form>
                 </div>
             {% else %}
                 <div class="col-md-3 text-end">
@@ -41,7 +43,6 @@
         </div>
     </nav>
 </header>
-
 <main role="main" class="flex-shrink-0">
     <div class="container" style="padding: 60px 15px 0;">
         {% block body %}

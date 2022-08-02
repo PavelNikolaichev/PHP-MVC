@@ -2,6 +2,9 @@
 
 namespace App\core;
 
+use Exception;
+use RuntimeException;
+
 class CurlManager
 {
     private array $options;
@@ -38,7 +41,7 @@ class CurlManager
      * @param string $url - url to run operation on.
      * @param string $data - JSON encoded data.
      * @return mixed - Decoded JSON response from the server.
-     * @throws \Exception
+     * @throws Exception
      */
     private function run_operation(string $operation, string $url, string $data = ''): mixed
     {
@@ -60,10 +63,10 @@ class CurlManager
 
         # Handle errors
         if (false === $response) {
-            throw new \Exception(curl_error($curl));
+            throw new RuntimeException(curl_error($curl));
         }
         if (isset($response['message'])) {
-            throw new \Exception($response['message']);
+            throw new RuntimeException($response['message']);
         }
 
         curl_close($curl);
@@ -75,9 +78,9 @@ class CurlManager
      * Method to send GET request.
      * @param string $url
      * @return mixed
-     * @throws \Exception
+     * @throws Exception
      */
-    public function get(string $url)
+    public function get(string $url): mixed
     {
         return $this->run_operation('get', $url);
     }
@@ -87,9 +90,9 @@ class CurlManager
      * @param string $url
      * @param string $data
      * @return mixed
-     * @throws \Exception
+     * @throws Exception
      */
-    public function post(string $url, string $data)
+    public function post(string $url, string $data): mixed
     {
         return $this->run_operation('post', $url, $data);
     }
@@ -99,9 +102,9 @@ class CurlManager
      * @param string $url
      * @param string $data
      * @return mixed
-     * @throws \Exception
+     * @throws Exception
      */
-    public function patch(string $url, string $data)
+    public function patch(string $url, string $data): mixed
     {
         return $this->run_operation('patch', $url, $data);
     }
@@ -110,9 +113,9 @@ class CurlManager
      * Method to send DELETE request.
      * @param string $url
      * @return void
-     * @throws \Exception
+     * @throws Exception
      */
-    public function delete(string $url)
+    public function delete(string $url): void
     {
         $this->run_operation('delete', $url);
     }

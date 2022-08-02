@@ -5,6 +5,7 @@ namespace App\Core\Database;
 use App\core\CurlManager;
 use App\Core\Model;
 use App\Models\UserModel;
+use Exception;
 use InvalidArgumentException;
 
 class RESTRepository implements IRepository
@@ -21,6 +22,7 @@ class RESTRepository implements IRepository
      * Method to get all users from the database.
      *
      * @return array - an array of users.
+     * @throws Exception
      */
     final public function fetchAll(): array
     {
@@ -40,6 +42,7 @@ class RESTRepository implements IRepository
      * @param int $id
      *
      * @return UserModel|null - an array of user fields.
+     * @throws Exception
      */
     final public function fetch(mixed $id): UserModel|null
     {
@@ -61,7 +64,8 @@ class RESTRepository implements IRepository
      *
      * @param Model $model - Model instance to save.
      *
-     * @return Model
+     * @return Model|null
+     * @throws Exception
      */
     final public function save(Model $model): Model|null
     {
@@ -76,6 +80,7 @@ class RESTRepository implements IRepository
      * Method to delete a user from the database.
      *
      * @param int $id - id of the user to be deleted.
+     * @throws Exception
      */
     final public function delete(int $id): void
     {

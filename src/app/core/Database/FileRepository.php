@@ -125,6 +125,6 @@ class FileRepository implements IRepository
      */
     public function delete(int $id): void
     {
-        throw new Exception('Not implemented yet');
+        throw new RuntimeException('Not implemented yet');
     }
 }

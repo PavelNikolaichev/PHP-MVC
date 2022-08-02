@@ -1,9 +1,10 @@
-<?php
+<?php /** @noinspection PhpInconsistentReturnPointsInspection */
 
 namespace App\Core;
 
 use App\core\Database\IRepository;
 use App\core\Responses\IResponse;
+use Couchbase\View;
 
 class Controller
 {

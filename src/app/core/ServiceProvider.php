@@ -5,12 +5,17 @@ namespace App\Core;
 use App\controllers\FileUploadController;
 use App\controllers\LoginController;
 use App\controllers\UserController;
+use App\core\Database\AttemptsRepository;
 use App\Core\Database\Database;
 use App\core\Database\FileRepository;
+use App\core\Database\IAttemptsRepository;
 use App\core\Database\IRepository;
 use App\core\Database\LoginRepository;
 use App\Core\Database\RESTRepository;
 use App\core\Log\FileLogger;
+use App\core\Log\LoginLogger;
+use App\core\Services\AuthenticateService;
+use App\core\Services\RegistrationService;
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
 use ReflectionException;
@@ -33,7 +38,6 @@ class ServiceProvider
      * Bootstraps the application.
      *
      * @return void
-     * @noinspection PhpUnusedParameterInspection
      * @noinspection PhpUnusedParameterInspection
      */
     private function bootstrap(): void
@@ -59,12 +63,16 @@ class ServiceProvider
                 return new $class(
                     $serviceProvider->make(FileRepository::class),
                     $serviceProvider->make(IView::class),
+                    $serviceProvider->make(IAuthenticatedUser::class)
                 );
             },
             LoginController::class => function (string $class, ServiceProvider $serviceProvider) {
                 return new $class(
                     $serviceProvider->make(LoginRepository::class),
                     $serviceProvider->make(IView::class),
+                    $serviceProvider->make(AuthenticateService::class),
+                    $serviceProvider->make(RegistrationService::class),
+                    $serviceProvider->make(IAuthenticatedUser::class)
                 );
             },
             FileRepository::class => function (string $class, ServiceProvider $serviceProvider) {
@@ -78,6 +86,15 @@ class ServiceProvider
             LoggerInterface::class => function (string $class, ServiceProvider $serviceProvider) {
                 return new FileLogger();
             },
+            IAuthenticatedUser::class => function (string $class, ServiceProvider $serviceProvider) {
+                return $serviceProvider->make(SessionAuthenticatedUser::class);
+            },
+            IAttemptsRepository::class => function (string $class, ServiceProvider $serviceProvider) {
+                return new AttemptsRepository(
+                    $serviceProvider->make(QueryBuilder::class),
+                    $serviceProvider->make(LoginLogger::class)
+                );
+            },
             'ConnectDb' => function () {
                 return new Database();
             },
@@ -86,6 +103,7 @@ class ServiceProvider
         $this->singletons = [
             'ConnectDb',
             SessionManager::class,
+            IAuthenticatedUser::class,
         ];
     }
 
@@ -105,7 +123,7 @@ class ServiceProvider
             }
 
             $this->instances[$class] = isset($this->map[$class])
-                ? call_user_func($this->map[$class])
+                ? call_user_func($this->map[$class], $class, $this)
                 : $this->makeThroughReflection($class);
 
             return $this->instances[$class];

@@ -6,12 +6,12 @@ use App\Core\Model;
 
 class UserModel extends Model
 {
-    public $name;
-    public $email;
-    public $id;
-    public $gender;
-    public $status;
-    private $errors = [];
+    public string $name;
+    public string $email;
+    public ?int $id;
+    public string $gender;
+    public string $status;
+    private array $errors = [];
 
     public function __construct(string $email, string $name, string $gender, string $status, int $id = null)
     {
