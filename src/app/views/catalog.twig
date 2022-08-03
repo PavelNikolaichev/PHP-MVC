@@ -1,0 +1,84 @@
+{% extends 'base.twig' %}
+
+{% block body %}
+    <h1>Catalog</h1>
+
+{% if products is defined and products is not empty %}
+    <table class="table table-striped table-hover" id="users">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Type</th>
+                <th scope="col">Price</th>
+                <th scope="col">Categories</th>
+                <th scope="col">Link</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+                <tr>
+                    <th scope="row" id="user-{{ product.getId }}">{{ product.getId }}</th>
+                    <th>{{ product.getType }}</th>
+                    <th>{{ product.getPrice }}</th>
+                    <th>{% for category in product.getCategories %} {{ category.getName }} : {{ category.getValue }} {% endfor %}</th>
+                    <th><a href="/user?id={{ service.id }}" class="btn btn-primary">Edit</a></th>
+                    <th>
+                        <form action="/delete?id={{ service.id }}" method="post" class="form-delete">
+                            <input type="hidden" name="id" value="{{ service.id }}">
+                            <button type="submit" name="delete" class="btn btn-danger">Delete</button>
+                        </form>
+                    </th>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>Catalog is empty</p>
+{% endif %}
+{% if services is defined and services is not empty %}
+    <h2>Related services for {{ services[0].getRelType }}</h2>
+    <table class="table table-striped table-hover" id="users">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Type</th>
+            <th scope="col">Price</th>
+            <th scope="col">Categories</th>
+            <th scope="col">Link</th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for service in services %}
+            <tr>
+                <th scope="row" id="user-{{ service.getId }}">{{ service.getId }}</th>
+                <th>{{ service.getType }}</th>
+                <th>{{ service.getPrice }}</th>
+                <th>{% for category in services.getCategories %} {{ category.getName }} : {{ category.getValue }} {% endfor %}</th>
+                <th><a href="/user?id={{ service.id }}" class="btn btn-primary">Edit</a></th>
+                <th>
+                    <form action="/delete?id={{ service.id }}" method="post" class="form-delete">
+                        <input type="hidden" name="id" value="{{ service.id }}">
+                        <button type="submit" name="delete" class="btn btn-danger">Delete</button>
+                    </form>
+                </th>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+
+<h2>Operations</h2>
+{% for operation in cart_hist %}
+    <p>Price: {{ operation.calculatePrice }}</p>
+    {% for product in operation.getItems %}
+        <p>{{ product.getType }}: {{ product.getPrice }}</p>
+    {% endfor %}
+    <hr>
+{% endfor %}
+
+{% endblock %}
+{% block scripts %}
+    <script type="text/javascript" src="static/js/form.js"></script>
+{% endblock %}

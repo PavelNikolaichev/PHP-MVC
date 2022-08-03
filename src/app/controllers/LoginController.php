@@ -9,18 +9,18 @@ use App\Core\IView;
 use App\core\Responses\HTMLResponse;
 use App\core\Responses\IResponse;
 use App\core\Services\AuthenticateService;
-use App\core\Services\RegistrationService;
+use App\core\Services\CatalogService;
 use Exception;
 use RuntimeException;
 
 class LoginController extends Controller
 {
     public function __construct(
-        ILoginRepository $model,
-        IView $view,
+        ILoginRepository            $model,
+        IView                       $view,
         private AuthenticateService $authenticateService,
-        private RegistrationService $registrationService,
-        private IAuthenticatedUser $sessionAuthenticatedUser
+        private CatalogService      $registrationService,
+        private IAuthenticatedUser  $sessionAuthenticatedUser
     ) {
         parent::__construct($model, $view);
     }
