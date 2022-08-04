@@ -29,10 +29,7 @@ class CartClass
     public function calculatePrice(): int
     {
         return array_sum(array_map(function($item) {
-            return $item->getPrice();
+            return $item->price;
         }, $this->items));
-//        return array_reduce($this->items, function($total, $item) {
-//            return $total + $item->getPrice();
-//        }, 0);
     }
 }

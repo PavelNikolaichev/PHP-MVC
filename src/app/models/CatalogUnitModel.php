@@ -7,43 +7,54 @@ use DateTime;
 
 class CatalogUnitModel extends Model
 {
+    private DateTime $created_at;
+    private DateTime $modified_at;
+
+    private array $cast = [
+        'created_at' => 'datetime',
+        'modified_at' => 'datetime',
+    ];
+
     public function __construct(
         private string $type,
         private float $price,
         private int $id,
-        private DateTime $added_at,
-        private DateTime $modified_at,
         private array $attributes
-    ) {}
-
-    public function getType(): string
-    {
-        return $this->type;
+    ) {
+        $this->created_at = new DateTime('now');
+        $this->modified_at = new DateTime('now');
     }
 
-    public function getPrice(): float
+    public function __get(string $name)
     {
-        return $this->price;
+        if (property_exists($this, $name)) {
+            if (isset($this->cast[$name])) {
+                return match ($this->cast[$name]) {
+                    'datetime' => $this->$name->format('Y-m-d H:i:s'),
+                    default => $this->$name,
+                };
+            }
+
+            return $this->$name;
+        }
+
+        $attrs = $this->getAttributesDict();
+
+        if (isset($attrs[$name])) {
+            return $attrs[$name];
+        }
     }
 
-    public function getId(): int
+    public function __set(string $name, $value)
     {
-        return $this->id;
+        if (property_exists($this, $name)) {
+            $this->$name = $value;
+        }
     }
 
-    public function getAddedAt(): DateTime
+    public function __isset(string $name): bool
     {
-        return $this->added_at;
-    }
-
-    public function getModifiedAt(): DateTime
-    {
-        return $this->modified_at;
-    }
-
-    public function getAttributes(): array
-    {
-        return $this->attributes;
+        return property_exists($this, $name);
     }
 
     public function getAttributesDict(): array

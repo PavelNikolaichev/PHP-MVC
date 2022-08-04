@@ -3,6 +3,7 @@
 namespace App\models;
 
 use App\Core\Model;
+use DateTime;
 
 class AttributeModel extends Model
 {
@@ -15,6 +16,10 @@ class AttributeModel extends Model
 
     public function getValue(): mixed
     {
+        if ($this->value instanceof DateTime) {
+            return $this->value->format('Y-m-d H:i:s');
+        }
+
         return $this->value;
     }
 
