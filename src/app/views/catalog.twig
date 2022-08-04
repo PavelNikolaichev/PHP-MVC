@@ -71,11 +71,20 @@
 
 <h2>Operations</h2>
 {% for operation in cart_hist %}
-    <p>Price: {{ operation.calculatePrice }}</p>
-    {% for product in operation.getItems %}
-        <p>{{ product.getType }}: {{ product.getPrice }}</p>
-    {% endfor %}
-    <hr>
+    <div class="container">
+        <p>Total Price: {{ operation.calculatePrice }}</p>
+        {% for item in operation.getItems %}
+            <p><b><i>{{ item.getType }}</i></b>: {{ item.getPrice }}</p>
+            {% for attribute in item.getAttributes %}
+                {% if attribute.getValue is iterable %}
+                    <p>{{ attribute.getName }}: {% for value in attribute.getValue %} {{ value }} {% endfor %}</p>
+                {% else %}
+                    <p>{{ attribute.getName }}: {{ attribute.getValue }}</p>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+        <hr>
+    </div>
 {% endfor %}
 
 {% endblock %}

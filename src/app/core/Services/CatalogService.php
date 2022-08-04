@@ -2,13 +2,13 @@
 
 namespace App\core\Services;
 
-use App\core\Database\ICatalogRepo;
+use App\core\Database\ICatalogRepository;
 use App\Core\IView;
 use App\core\Responses\HTMLResponse;
 
 class CatalogService
 {
-    public function __construct(private ICatalogRepo $repo, private IView $view) {}
+    public function __construct(private ICatalogRepository $repo, private IView $view) {}
 
     public function run()
     {

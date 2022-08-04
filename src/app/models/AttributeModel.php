@@ -4,7 +4,7 @@ namespace App\models;
 
 use App\Core\Model;
 
-class CategoryModel extends Model
+class AttributeModel extends Model
 {
     public function __construct(private string $name, private mixed $value, private int $id) {}
 

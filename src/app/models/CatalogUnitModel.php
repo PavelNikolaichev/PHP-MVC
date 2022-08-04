@@ -13,7 +13,7 @@ class CatalogUnitModel extends Model
         private int $id,
         private DateTime $added_at,
         private DateTime $modified_at,
-        private array $categories
+        private array $attributes
     ) {}
 
     public function getType(): string
@@ -41,8 +41,16 @@ class CatalogUnitModel extends Model
         return $this->modified_at;
     }
 
-    public function getCategories(): array
+    public function getAttributes(): array
     {
-        return $this->categories;
+        return $this->attributes;
+    }
+
+    public function getAttributesDict(): array
+    {
+        return array_reduce($this->attributes, function($dict, $attr) {
+            $dict[$attr->getName()] = $attr->getValue();
+            return $dict;
+        }, []);
     }
 }

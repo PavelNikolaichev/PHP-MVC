@@ -2,7 +2,7 @@
 
 namespace App\core\Database;
 
-interface ICatalogRepo
+interface ICatalogRepository
 {
     public function fetchAll() : array;
     public function fetchRelatedServices(string $relType) : array;
