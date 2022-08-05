@@ -56,7 +56,7 @@
                 <th>{{ service.type }}</th>
                 <th>{{ service.price }}</th>
                 <th>
-                    {% for attributeName, attributeValue in services.attributes %}
+                    {% for attributeName, attributeValue in service.attributes %}
                         {% if attributeValue is iterable %}
                             {{ attributeName }}
                             {% for value in attributeValue %}
