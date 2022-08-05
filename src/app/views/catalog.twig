@@ -20,13 +20,13 @@
                     <th>{{ product.type }}</th>
                     <th>{{ product.price }}</th>
                     <th>
-                        {% for attribute in product.attributes %}
-                            {% if attribute.getValue is iterable %}
-                                {% for value in attribute.getValue %}
+                        {% for attributeName, attributeValue in product.attributes %}
+                            {% if attributeValue is iterable %}
+                                {% for value in attributeValue %}
                                     {{ value }}
                                 {% endfor %},
                             {% else %}
-                                {{ attribute.getName }}: {{ attribute.getValue }},
+                                {{ attributeName }}: {{ attributeValue }},
                             {% endif %}
                         {% endfor %}
                     </th>
@@ -38,7 +38,7 @@
     <p>Catalog is empty</p>
 {% endif %}
 {% if services is defined and services is not empty %}
-    <h2>Related services for: {{ services[0].getAttributesDict()['RelationTypes'] | join(', ') }}</h2>
+    <h2>Related services for: {{ services[0].attributes['RelationTypes'] | join(', ') }}</h2>
 
     <table class="table table-striped table-hover" id="users">
         <thead class="thead-dark">
@@ -56,14 +56,14 @@
                 <th>{{ service.type }}</th>
                 <th>{{ service.price }}</th>
                 <th>
-                    {% for attribute in services.attributes %}
-                        {% if attribute.getValue is iterable %}
-                            {{ attribute.getName }}
-                            {% for value in attribute.getValue %}
+                    {% for attributeName, attributeValue in services.attributes %}
+                        {% if attributeValue is iterable %}
+                            {{ attributeName }}
+                            {% for value in attributeValue %}
                                 {{ value }},
                             {% endfor %}
                         {% else %}
-                            {{ attribute.getName }}: {{ attribute.getValue }}
+                            {{ attributeName }}: {{ attributeValue }}
                         {% endif %}
                     {% endfor %}
                 </th>
@@ -79,11 +79,11 @@
         <p>Total Price: {{ operation.calculatePrice }}</p>
         {% for item in operation.getItems %}
             <p><b><i>{{ item.type }}</i></b>: {{ item.price }}</p>
-            {% for attribute in item.attributes %}
-                {% if attribute.getValue is iterable %}
-                    <p>{{ attribute.getName }}: {% for value in attribute.getValue %} {{ value }} {% endfor %}</p>
+            {% for attributeName, attributeValue in item.attributes %}
+                {% if attributeValue is iterable %}
+                    <p>{{ attributeName }}: {% for value in attributeValue %} {{ value }} {% endfor %}</p>
                 {% else %}
-                    <p>{{ attribute.getName }}: {{ attribute.getValue }}</p>
+                    <p>{{ attributeName }}: {{ attributeValue }}</p>
                 {% endif %}
             {% endfor %}
         {% endfor %}

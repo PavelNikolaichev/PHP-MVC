@@ -19,8 +19,9 @@ class CatalogService
         $cart_hist = [];
         $cart_hist[] = (new CartClass())->add($products[0]);
         $cart_hist[] = (clone end($cart_hist))->add($products[2]);
-        $cart_hist[] = (clone end($cart_hist))->add($products[3]);
-        $cart_hist[] = (clone end($cart_hist))->remove($products[0]);
+        $cart_hist[] = (clone end($cart_hist))->add($products[4], 0);
+        $cart_hist[] = (clone end($cart_hist))->add($products[5], 0);
+        $cart_hist[] = (clone end($cart_hist))->remove(0);
 
         return new HTMLResponse(['100 OK'], $this->view->render('catalog', [
             'products' => $products,

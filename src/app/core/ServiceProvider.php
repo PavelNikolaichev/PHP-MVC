@@ -17,6 +17,7 @@ use App\Core\Database\RESTRepository;
 use App\core\Log\FileLogger;
 use App\core\Log\LoginLogger;
 use App\core\Services\AuthenticateService;
+use App\core\Services\RegistrationService;
 use App\core\Services\CatalogService;
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
@@ -73,7 +74,7 @@ class ServiceProvider
                     $serviceProvider->make(LoginRepository::class),
                     $serviceProvider->make(IView::class),
                     $serviceProvider->make(AuthenticateService::class),
-                    $serviceProvider->make(CatalogService::class),
+                    $serviceProvider->make(RegistrationService::class),
                     $serviceProvider->make(IAuthenticatedUser::class)
                 );
             },

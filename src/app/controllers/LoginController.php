@@ -9,7 +9,7 @@ use App\Core\IView;
 use App\core\Responses\HTMLResponse;
 use App\core\Responses\IResponse;
 use App\core\Services\AuthenticateService;
-use App\core\Services\CatalogService;
+use App\core\Services\RegistrationService;
 use Exception;
 use RuntimeException;
 
@@ -19,7 +19,7 @@ class LoginController extends Controller
         ILoginRepository            $model,
         IView                       $view,
         private AuthenticateService $authenticateService,
-        private CatalogService      $registrationService,
+        private RegistrationService      $registrationService,
         private IAuthenticatedUser  $sessionAuthenticatedUser
     ) {
         parent::__construct($model, $view);

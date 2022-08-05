@@ -12,7 +12,7 @@ class CatalogUnitModel extends Model
 
     private array $cast = [
         'created_at' => 'datetime',
-        'modified_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     public function __construct(
@@ -38,10 +38,8 @@ class CatalogUnitModel extends Model
             return $this->$name;
         }
 
-        $attrs = $this->getAttributesDict();
-
-        if (isset($attrs[$name])) {
-            return $attrs[$name];
+        if (isset($this->attributes[$name])) {
+            return $this->attributes[$name];
         }
     }
 
@@ -50,18 +48,14 @@ class CatalogUnitModel extends Model
         if (property_exists($this, $name)) {
             $this->$name = $value;
         }
+
+        if (isset($this->attributes[$name])) {
+            $this->attributes[$name] = $value;
+        }
     }
 
     public function __isset(string $name): bool
     {
-        return property_exists($this, $name);
-    }
-
-    public function getAttributesDict(): array
-    {
-        return array_reduce($this->attributes, function($dict, $attr) {
-            $dict[$attr->getName()] = $attr->getValue();
-            return $dict;
-        }, []);
+        return property_exists($this, $name) || isset($this->attributes[$name]);
     }
 }

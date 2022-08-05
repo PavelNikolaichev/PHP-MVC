@@ -8,20 +8,24 @@ use DateTime;
 
 class CatalogRepository implements ICatalogRepository
 {
-    private array $products;
+    private array $items;
 
     public function __construct()
     {
-        $this->products = [
+        $this->items = [
             new CatalogUnitModel(
                 'Product',
                 100,
                 1,
                 [
-                    new AttributeModel('ProductType', 'Laptop', 0),
-                    new AttributeModel('Manufacturer', 'Lenovo', 1),
-                    new AttributeModel('Release Date', new DateTime('now'), 2),
-                    new AttributeModel('Model', 'ThinkPad X1 Carbon', 3),
+                    (new AttributeModel('ProductType', 'Laptop', 0))->getName()
+                    => (new AttributeModel('ProductType', 'Laptop', 0))->getValue(),
+                    (new AttributeModel('Manufacturer', 'Lenovo', 1))->getName()
+                    => (new AttributeModel('Manufacturer', 'Lenovo', 1))->getValue(),
+                    (new AttributeModel('Release Date', new DateTime('now'), 2))->getName()
+                    => (new AttributeModel('Release Date', new DateTime('now'), 2))->getValue(),
+                    (new AttributeModel('Model', 'ThinkPad X1 Carbon', 3))->getName()
+                    => (new AttributeModel('Model', 'ThinkPad X1 Carbon', 3))->getValue(),
                 ]
             ),
             new CatalogUnitModel(
@@ -29,10 +33,14 @@ class CatalogRepository implements ICatalogRepository
                 100,
                 2,
                 [
-                    new AttributeModel('ProductType', 'Fridge', 0),
-                    new AttributeModel('Manufacturer', 'Panasonic', 1),
-                    new AttributeModel('Release Date', new DateTime('now'), 2),
-                    new AttributeModel('Model', 'KX-TZS', 3),
+                    (new AttributeModel('ProductType', 'Fridge', 0))->getName()
+                    => (new AttributeModel('ProductType', 'Fridge', 0))->getValue(),
+                    (new AttributeModel('Manufacturer', 'Panasonic', 1))->getName()
+                    => (new AttributeModel('Manufacturer', 'Panasonic', 1))->getValue(),
+                    (new AttributeModel('Release Date', new DateTime('now'), 2))->getName()
+                    => (new AttributeModel('Release Date', new DateTime('now'), 2))->getValue(),
+                    (new AttributeModel('Model', 'KX-TZS', 3))->getName()
+                    => (new AttributeModel('Model', 'KX-TZS', 3))->getValue(),
                 ]
             ),
             new CatalogUnitModel(
@@ -40,10 +48,14 @@ class CatalogRepository implements ICatalogRepository
                 100,
                 3,
                 [
-                    new AttributeModel('ProductType', 'TV Set', 0),
-                    new AttributeModel('Manufacturer', 'Samsung', 1),
-                    new AttributeModel('Release Date', new DateTime('now'), 2),
-                    new AttributeModel('Model', 'UE40J5100', 3),
+                    (new AttributeModel('ProductType', 'TV Set', 0))->getName()
+                    =>(new AttributeModel('ProductType', 'TV Set', 0))->getValue(),
+                    (new AttributeModel('Manufacturer', 'Samsung', 1))->getName()
+                    =>(new AttributeModel('Manufacturer', 'Samsung', 1))->getValue(),
+                    (new AttributeModel('Release Date', new DateTime('now'), 2))->getName()
+                    =>(new AttributeModel('Release Date', new DateTime('now'), 2))->getValue(),
+                    (new AttributeModel('Model', 'UE40J5100', 3))->getName()
+                    =>(new AttributeModel('Model', 'UE40J5100', 3))->getValue(),
                 ]
             ),
             new CatalogUnitModel(
@@ -51,10 +63,14 @@ class CatalogRepository implements ICatalogRepository
                 100,
                 5,
                 [
-                    new AttributeModel('ProductType', 'Mobile Phone', 0),
-                    new AttributeModel('Manufacturer', 'Samsung', 1),
-                    new AttributeModel('Release Date', new DateTime('now'), 2),
-                    new AttributeModel('Model', 'Galaxy S8', 3),
+                    (new AttributeModel('ProductType', 'Mobile Phone', 0))->getName()
+                    =>(new AttributeModel('ProductType', 'Mobile Phone', 0))->getValue(),
+                    (new AttributeModel('Manufacturer', 'Samsung', 1))->getName()
+                    =>(new AttributeModel('Manufacturer', 'Samsung', 1))->getValue(),
+                    (new AttributeModel('Release Date', new DateTime('now'), 2))->getName()
+                    =>(new AttributeModel('Release Date', new DateTime('now'), 2))->getValue(),
+                    (new AttributeModel('Model', 'Galaxy S8', 3))->getName()
+                    =>(new AttributeModel('Model', 'Galaxy S8', 3))->getValue(),
                 ]
             ),
             new CatalogUnitModel(
@@ -62,9 +78,12 @@ class CatalogRepository implements ICatalogRepository
                 100,
                 4,
                 [
-                    new AttributeModel('ServiceType', 'Warranty Service', 0),
-                    new AttributeModel('RelationTypes', ['Laptop', 'TV Set'], 2),
-                    new AttributeModel('Deadline', new DateTime('2020-01-01'), 3),
+                    (new AttributeModel('ServiceType', 'Warranty Service', 0))->getName()
+                    =>(new AttributeModel('ServiceType', 'Warranty Service', 0))->getValue(),
+                    (new AttributeModel('RelationTypes', ['Laptop', 'TV Set'], 2))->getName()
+                    =>(new AttributeModel('RelationTypes', ['Laptop', 'TV Set'], 2))->getValue(),
+                    (new AttributeModel('Deadline', new DateTime('2020-01-01'), 3))->getName()
+                    =>(new AttributeModel('Deadline', new DateTime('2020-01-01'), 3))->getValue(),
                 ]
             ),
             new CatalogUnitModel(
@@ -72,9 +91,12 @@ class CatalogRepository implements ICatalogRepository
                 100,
                 4,
                 [
-                    new AttributeModel('ServiceType', 'Delivery Service', 0),
-                    new AttributeModel('RelationTypes', ['Fridge', 'TV Set'], 2),
-                    new AttributeModel('Deadline', new DateTime('2020-01-01'), 3),
+                    (new AttributeModel('ServiceType', 'Delivery Service', 0))->getName()
+                    =>(new AttributeModel('ServiceType', 'Delivery Service', 0))->getValue(),
+                    (new AttributeModel('RelationTypes', ['Fridge', 'TV Set'], 2))->getName()
+                    =>(new AttributeModel('RelationTypes', ['Fridge', 'TV Set'], 2))->getValue(),
+                    (new AttributeModel('Deadline', new DateTime('2020-01-01'), 3))->getName()
+                    =>(new AttributeModel('Deadline', new DateTime('2020-01-01'), 3))->getValue(),
                 ]
             ),
             new CatalogUnitModel(
@@ -82,10 +104,14 @@ class CatalogRepository implements ICatalogRepository
                 100,
                 4,
                 [
-                    new AttributeModel('ServiceType', 'Install and Configure Service', 0),
-                    new AttributeModel('Manufacturer', 'Lenovo', 1),
-                    new AttributeModel('RelationTypes', ['Laptop', 'TV Set', 'Mobile Phone'], 2),
-                    new AttributeModel('Deadline', new DateTime('2020-01-01'), 3),
+                    (new AttributeModel('ServiceType', 'Install and Configure Service', 0))->getName()
+                    =>(new AttributeModel('ServiceType', 'Install and Configure Service', 0))->getValue(),
+                    (new AttributeModel('Manufacturer', 'Lenovo', 1))->getName()
+                    =>(new AttributeModel('Manufacturer', 'Lenovo', 1))->getValue(),
+                    (new AttributeModel('RelationTypes', ['Laptop', 'TV Set', 'Mobile Phone'], 2))->getName()
+                    =>(new AttributeModel('RelationTypes', ['Laptop', 'TV Set', 'Mobile Phone'], 2))->getValue(),
+                    (new AttributeModel('Deadline', new DateTime('2020-01-01'), 3))->getName()
+                    =>(new AttributeModel('Deadline', new DateTime('2020-01-01'), 3))->getValue(),
                 ]
             ),
         ];
@@ -93,14 +119,14 @@ class CatalogRepository implements ICatalogRepository
 
     public function fetchAll(): array
     {
-        return $this->products;
+        return $this->items;
     }
 
     public function fetchRelatedServices(string $relType): array
     {
         $catalog = [];
 
-        foreach ($this->products as $unit) {
+        foreach ($this->items as $unit) {
             if ($unit->type === 'Service') {
                 $relTypes = $unit->RelationTypes;
 
