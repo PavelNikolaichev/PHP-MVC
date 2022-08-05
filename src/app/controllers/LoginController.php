@@ -16,11 +16,11 @@ use RuntimeException;
 class LoginController extends Controller
 {
     public function __construct(
-        ILoginRepository $model,
-        IView $view,
+        ILoginRepository            $model,
+        IView                       $view,
         private AuthenticateService $authenticateService,
-        private RegistrationService $registrationService,
-        private IAuthenticatedUser $sessionAuthenticatedUser
+        private RegistrationService      $registrationService,
+        private IAuthenticatedUser  $sessionAuthenticatedUser
     ) {
         parent::__construct($model, $view);
     }

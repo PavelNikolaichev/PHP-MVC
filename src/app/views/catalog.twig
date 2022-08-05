@@ -1,0 +1,97 @@
+{% extends 'base.twig' %}
+
+{% block body %}
+    <h1>Catalog</h1>
+
+{% if products is defined and products is not empty %}
+    <table class="table table-striped table-hover" id="users">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Type</th>
+                <th scope="col">Price</th>
+                <th scope="col">Categories</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+                <tr>
+                    <th scope="row" id="user-{{ product.id }}">{{ product.id }}</th>
+                    <th>{{ product.type }}</th>
+                    <th>{{ product.price }}</th>
+                    <th>
+                        {% for attributeName, attributeValue in product.attributes %}
+                            {% if attributeValue is iterable %}
+                                {% for value in attributeValue %}
+                                    {{ value }}
+                                {% endfor %},
+                            {% else %}
+                                {{ attributeName }}: {{ attributeValue }},
+                            {% endif %}
+                        {% endfor %}
+                    </th>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>Catalog is empty</p>
+{% endif %}
+{% if services is defined and services is not empty %}
+    <h2>Related services for: {{ services[0].attributes['RelationTypes'] | join(', ') }}</h2>
+
+    <table class="table table-striped table-hover" id="users">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Type</th>
+            <th scope="col">Price</th>
+            <th scope="col">Categories</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for service in services %}
+            <tr>
+                <th scope="row" id="user-{{ service.id }}">{{ service.id }}</th>
+                <th>{{ service.type }}</th>
+                <th>{{ service.price }}</th>
+                <th>
+                    {% for attributeName, attributeValue in service.attributes %}
+                        {% if attributeValue is iterable %}
+                            {{ attributeName }}
+                            {% for value in attributeValue %}
+                                {{ value }},
+                            {% endfor %}
+                        {% else %}
+                            {{ attributeName }}: {{ attributeValue }}
+                        {% endif %}
+                    {% endfor %}
+                </th>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+
+<h2>Operations</h2>
+{% for operation in cart_hist %}
+    <div class="container">
+        <p>Total Price: {{ operation.calculatePrice }}</p>
+        {% for item in operation.getItems %}
+            <p><b><i>{{ item.type }}</i></b>: {{ item.price }}</p>
+            {% for attributeName, attributeValue in item.attributes %}
+                {% if attributeValue is iterable %}
+                    <p>{{ attributeName }}: {% for value in attributeValue %} {{ value }} {% endfor %}</p>
+                {% else %}
+                    <p>{{ attributeName }}: {{ attributeValue }}</p>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+        <hr>
+    </div>
+{% endfor %}
+
+{% endblock %}
+{% block scripts %}
+    <script type="text/javascript" src="static/js/form.js"></script>
+{% endblock %}

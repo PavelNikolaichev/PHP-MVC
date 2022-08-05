@@ -6,9 +6,11 @@ use App\controllers\FileUploadController;
 use App\controllers\LoginController;
 use App\controllers\UserController;
 use App\core\Database\AttemptsRepository;
+use App\core\Database\CatalogRepository;
 use App\Core\Database\Database;
 use App\core\Database\FileRepository;
 use App\core\Database\IAttemptsRepository;
+use App\core\Database\ICatalogRepository;
 use App\core\Database\IRepository;
 use App\core\Database\LoginRepository;
 use App\Core\Database\RESTRepository;
@@ -16,6 +18,7 @@ use App\core\Log\FileLogger;
 use App\core\Log\LoginLogger;
 use App\core\Services\AuthenticateService;
 use App\core\Services\RegistrationService;
+use App\core\Services\CatalogService;
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
 use ReflectionException;
@@ -94,6 +97,9 @@ class ServiceProvider
                     $serviceProvider->make(QueryBuilder::class),
                     $serviceProvider->make(LoginLogger::class)
                 );
+            },
+            ICatalogRepository::class => function (string $class, ServiceProvider $serviceProvider) {
+                return $serviceProvider->make(CatalogRepository::class);
             },
             'ConnectDb' => function () {
                 return new Database();

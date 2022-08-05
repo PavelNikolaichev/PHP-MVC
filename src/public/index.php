@@ -6,6 +6,7 @@ use App\core\Responses\HTMLResponse;
 use App\core\Responses\IResponse;
 use App\Core\Router;
 use App\Core\ServiceProvider;
+use App\core\Services\CatalogService;
 use App\core\SessionManager;
 
 require_once '../vendor/autoload.php';
@@ -63,6 +64,10 @@ $router->get('/file-upload', function ($params) use ($serviceProvider) {
 
 $router->post('/file-upload', function ($params) use ($serviceProvider) {
     return $serviceProvider->make(\App\controllers\FileUploadController::class)->upload($params);
+});
+
+$router->get('/catalog', function ($params) use ($serviceProvider) {
+    return $serviceProvider->make(CatalogService::class)->run($params);
 });
 
 $router->addNotFoundRoute(function () {
